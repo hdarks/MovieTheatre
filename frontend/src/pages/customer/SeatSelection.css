@@ -1,0 +1,67 @@
+/* SeatSelection.css */
+
+.seat-page {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.seat-page h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+    text-align: center;
+}
+
+/* SeatMap container */
+.seat-page .seat-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+    gap: 0.5rem;
+    justify-items: center;
+    margin: 2rem 0;
+}
+
+/* Selected info */
+.selected-info {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    color: #374151;
+}
+
+/* Proceed button */
+.seat-page button {
+    display: block;
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 0.75rem 1rem;
+    background: #10b981;
+    /* emerald green */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.seat-page button:hover:enabled {
+    background: #059669;
+    transform: translateY(-2px);
+}
+
+.seat-page button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}

@@ -1,0 +1,144 @@
+.pricing-page {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #f9fafb;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", sans-serif;
+}
+
+.pricing-page h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+}
+
+.pricing-page p {
+    text-align: center;
+    margin: 0.5rem 0;
+    color: #2563eb;
+    font-weight: 500;
+}
+
+/* Showtime selector */
+.pricing-page select {
+    display: block;
+    margin: 0 auto 1.5rem auto;
+    padding: 0.6rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Add Rule Form */
+.add-rule-form {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 2rem;
+}
+
+.add-rule-form h3 {
+    margin-bottom: 1rem;
+    color: #111827;
+}
+
+.add-rule-form select,
+.add-rule-form input {
+    margin-right: 0.8rem;
+    padding: 0.6rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.add-rule-form button {
+    padding: 0.6rem 1.2rem;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.add-rule-form button:hover {
+    background: #1e40af;
+}
+
+/* Rules List */
+.rules-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.rule-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    margin-bottom: 0.8rem;
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+.rule-item strong {
+    flex: 1;
+    font-size: 1rem;
+    color: #111827;
+}
+
+/* Inputs inside rule items */
+.rule-item input,
+.rule-item select {
+    margin: 0 0.5rem;
+    padding: 0.4rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+/* Delete button */
+.rule-item .btn-danger {
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.rule-item .btn-danger:hover {
+    background: #b91c1c;
+}
+
+/* Rule type badges */
+.rule-item strong::before {
+    content: "• ";
+    color: #2563eb;
+}
+
+.rule-item strong.timeBased {
+    color: #2563eb;
+    /* blue */
+}
+
+.rule-item strong.seatType {
+    color: #16a34a;
+    /* green */
+}
+
+.rule-item strong.promo {
+    color: #f59e0b;
+    /* amber */
+}

@@ -1,0 +1,47 @@
+/* QRScanner.css */
+
+#qr-reader {
+    margin: 1.5rem auto;
+    max-width: 500px;
+    width: 100%;
+    min-height: 300px;
+    border: 2px solid #d1d5db;
+    border-radius: 12px;
+    background: #f9fafb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Scanner overlay text (library sometimes injects elements) */
+#qr-reader__dashboard_section {
+    background: #1f2937;
+    color: #f9fafb;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    text-align: center;
+    border-bottom: 1px solid #374151;
+}
+
+#qr-reader__scan_region {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+}
+
+/* Buttons injected by html5-qrcode */
+#qr-reader button {
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+#qr-reader button:hover {
+    background: #4f46e5;
+}

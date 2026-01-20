@@ -1,0 +1,124 @@
+.seatmap-container {
+    display: grid;
+    gap: 12px;
+    padding: 20px;
+    justify-content: center;
+}
+
+/* Screen label */
+.screen {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--color-secondary);
+}
+
+/* Row layout */
+.seat-row {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Row label on the left */
+.row-label {
+    font-weight: bold;
+    margin-right: 10px;
+    color: var(--color-text-light);
+    width: 20px;
+    text-align: right;
+}
+
+/* Seat styles */
+.seat {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border: 2px solid transparent;
+}
+
+/* Seat states */
+.seat.available {
+    background: var(--seat-available);
+}
+
+.seat.selected {
+    background: var(--seat-selected);
+    border-color: var(--color-primary-dark);
+}
+
+.seat.booked {
+    background: var(--seat-booked);
+    cursor: not-allowed;
+}
+
+.seat.locked {
+    background: var(--seat-locked);
+    cursor: not-allowed;
+}
+
+/* Hover effect */
+.seat.available:hover {
+    transform: scale(1.1);
+    background: #d5d5d5;
+}
+
+/* Seat types */
+.seat.standard {
+    border-radius: var(--radius);
+    background: var(--seat-available);
+}
+
+.seat.vip {
+    background: #ffd700;
+    /* gold for VIP */
+    font-weight: bold;
+}
+
+.seat.accessible {
+    background: #87ceeb;
+    /* light blue for accessible */
+    border: 2px dashed var(--color-info);
+}
+
+/* Legend panel */
+.seat-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.legend-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+/* Seat type colors */
+.standard {
+    background-color: var(--seat-available, #ccc);
+}
+
+.vip {
+    background-color: #ffd700;
+}
+
+.accessible {
+    background-color: #87ceeb;
+    border: 2px dashed var(--color-info, #007bff);
+}
+
+.seat:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}

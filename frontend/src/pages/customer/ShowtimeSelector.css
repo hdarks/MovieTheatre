@@ -1,0 +1,52 @@
+/* ShowtimeSelector.css */
+
+.showtime-page {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.showtime-page h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+    text-align: center;
+}
+
+.showtime-page ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.showtime-page li {
+    margin-bottom: 1rem;
+}
+
+.showtime-page a {
+    display: block;
+    padding: 1rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #1f2937;
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.showtime-page a:hover {
+    background: #e0f2fe;
+    /* light blue highlight */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.showtime-page p {
+    color: #1f2937;
+}

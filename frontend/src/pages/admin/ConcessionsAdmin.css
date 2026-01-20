@@ -1,0 +1,207 @@
+.concession-admin {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #f9fafb;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", sans-serif;
+}
+
+.concession-admin h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+}
+
+.concession-admin p {
+    text-align: center;
+    margin: 0.5rem 0;
+    color: #2563eb;
+    font-weight: 500;
+}
+
+/* Form styling */
+.concession-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.concession-form input,
+.concession-form select {
+    flex: 1 1 200px;
+    padding: 0.6rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.concession-form label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.concession-form button {
+    flex: 1 1 150px;
+    padding: 0.8rem;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.concession-form button:hover {
+    background: #1e40af;
+}
+
+/* Concession list */
+.concession-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.concession-item {
+    background: #fff;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.concession-item strong {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #111827;
+}
+
+.concession-item .badges {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* Category badges */
+.badge.food {
+    background: #16a34a;
+    /* green */
+    color: #fff;
+}
+
+.badge.drink {
+    background: #2563eb;
+    /* blue */
+    color: #fff;
+}
+
+.badge.merch {
+    background: #f59e0b;
+    /* amber */
+    color: #fff;
+}
+
+/* Active status badges */
+.badge.active {
+    background: #22c55e;
+    /* bright green */
+    color: #fff;
+}
+
+.badge.inactive {
+    background: #6b7280;
+    /* gray */
+    color: #fff;
+}
+
+.concession-item .actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+}
+
+/* Buttons */
+.concession-item button {
+    padding: 0.5rem 0.8rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.concession-item button:first-of-type {
+    background: #f59e0b;
+    /* Edit button amber */
+    color: #fff;
+}
+
+.concession-item button:first-of-type:hover {
+    background: #d97706;
+}
+
+.concession-item button:nth-of-type(2) {
+    background: #dc2626;
+    /* Delete button red */
+    color: #fff;
+}
+
+.concession-item button:nth-of-type(2):hover {
+    background: #b91c1c;
+}
+
+.concession-item button:nth-of-type(3) {
+    background: #16a34a;
+    /* +1 stock green */
+    color: #fff;
+}
+
+.concession-item button:nth-of-type(3):hover {
+    background: #15803d;
+}
+
+.concession-item button:nth-of-type(4) {
+    background: #ef4444;
+    /* -1 stock red */
+    color: #fff;
+}
+
+.concession-item button:nth-of-type(4):hover {
+    background: #b91c1c;
+}
+
+.concession-admin p {
+    text-align: center;
+    margin: 0.5rem 0;
+    color: #2563eb;
+    font-weight: 500;
+    transition: opacity 0.5s ease;
+}
+
+.concession-admin p.hidden {
+    opacity: 0;
+    pointer-events: none;
+}

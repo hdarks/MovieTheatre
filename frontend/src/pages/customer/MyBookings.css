@@ -1,0 +1,98 @@
+/* MyBookings.css */
+
+.my-bookings {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.my-bookings h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+    text-align: center;
+}
+
+.my-bookings p {
+    margin: 0.5rem 0;
+    color: #374151;
+}
+
+.my-bookings ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.my-bookings li {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.my-bookings li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.my-bookings li strong {
+    font-size: 1.2rem;
+    color: #111827;
+}
+
+/* Status styling */
+.my-bookings li p:last-of-type {
+    font-weight: 600;
+}
+
+.my-bookings li p:last-of-type::before {
+    content: "• ";
+}
+
+.my-bookings li p:last-of-type {
+    color: #2563eb;
+    /* default blue */
+}
+
+.my-bookings li p:last-of-type:contains("cancelled") {
+    color: #ef4444;
+    /* red */
+}
+
+.my-bookings li p:last-of-type:contains("confirmed") {
+    color: #10b981;
+    /* green */
+}
+
+/* Cancel button */
+.my-bookings button {
+    margin-top: 0.75rem;
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.my-bookings button:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+/* Message styling */
+.my-bookings>p {
+    text-align: center;
+    font-weight: 500;
+    color: #059669;
+}

@@ -1,0 +1,145 @@
+/* Container */
+.pricing-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #fdfdfd;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Title */
+.pricing-page h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+/* Message */
+.pricing-page p {
+    text-align: center;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 1rem;
+}
+
+/* Showtime Dropdown */
+.pricing-page select {
+    width: 100%;
+    padding: 0.6rem;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+}
+
+/* Add Rule Form */
+.add-rule-form {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.add-rule-form h3 {
+    grid-column: span 4;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #222;
+}
+
+.add-rule-form select,
+.add-rule-form input {
+    padding: 0.5rem;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+}
+
+.add-rule-form button {
+    grid-column: span 4;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.add-rule-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Rule List */
+.pricing-page ul {
+    list-style: none;
+    padding: 0;
+}
+
+.pricing-page li {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    background-color: #f8f8f8;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.pricing-page li strong {
+    font-weight: 600;
+    color: #333;
+}
+
+.pricing-page li input,
+.pricing-page li select {
+    padding: 0.4rem;
+    font-size: 0.9rem;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    background-color: #fff;
+}
+
+.pricing-page li button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.pricing-page li button:hover {
+    background-color: #d32f2f;
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+    .add-rule-form {
+        grid-template-columns: 1fr;
+    }
+
+    .add-rule-form button {
+        grid-column: span 1;
+    }
+
+    .pricing-page li {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .pricing-page li button {
+        width: 100%;
+    }
+}

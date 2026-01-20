@@ -1,0 +1,81 @@
+/* Concessions.css */
+
+.concessions-page {
+    padding: 2rem;
+    background: #f9fafb;
+    min-height: 100vh;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.concessions-page h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+    text-align: center;
+}
+
+.concessions-page .status-message {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    color: #2563eb;
+}
+
+.concessions-page ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.concessions-page li {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.concessions-page li p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    color: #374151;
+}
+
+.concessions-page button {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.concessions-page button:first-of-type {
+    background: #10b981;
+    /* green for +1 */
+    color: #fff;
+}
+
+.concessions-page button:first-of-type:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.concessions-page button:last-of-type {
+    background: #ef4444;
+    /* red for -1 */
+    color: #fff;
+}
+
+.concessions-page button:last-of-type:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}

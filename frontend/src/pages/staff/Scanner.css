@@ -1,0 +1,81 @@
+/* Scanner.css */
+
+.scanner-page {
+    padding: 2rem;
+    background: #f9fafb;
+    min-height: 100vh;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.scanner-page h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+    text-align: center;
+}
+
+/* QR scanner container */
+.scanner-page #qr-reader {
+    margin: 1rem auto;
+    max-width: 500px;
+    border: 2px solid #d1d5db;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Status messages */
+.status-message {
+    margin-top: 1rem;
+    font-weight: 500;
+    color: #2563eb;
+    text-align: center;
+}
+
+.error {
+    margin-top: 1rem;
+    font-weight: 500;
+    color: #dc2626;
+    text-align: center;
+}
+
+/* Scan result card */
+.scan-result {
+    margin-top: 2rem;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    max-width: 500px;
+    width: 100%;
+}
+
+.scan-result p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    color: #374151;
+}
+
+/* Confirm button */
+.scan-result button {
+    margin-top: 1rem;
+    background: #10b981;
+    color: #fff;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.scan-result button:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}

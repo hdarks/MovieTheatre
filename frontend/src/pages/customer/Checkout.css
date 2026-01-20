@@ -1,0 +1,50 @@
+/* Checkout.css */
+
+.checkout-page {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.checkout-page h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+    text-align: center;
+}
+
+.checkout-page p {
+    font-size: 1rem;
+    margin: 0.75rem 0;
+    color: #374151;
+}
+
+.checkout-page p strong {
+    color: #111827;
+}
+
+.checkout-page button {
+    display: block;
+    width: 100%;
+    margin-top: 2rem;
+    padding: 0.75rem 1rem;
+    background: #10b981;
+    /* emerald green */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.checkout-page button:hover {
+    background: #059669;
+    transform: translateY(-2px);
+}

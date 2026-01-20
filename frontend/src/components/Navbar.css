@@ -1,0 +1,79 @@
+/* Navbar.css */
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Light & Dark theme variants */
+.navbar.light {
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+.navbar.dark {
+    background: #1f2937;
+    color: #f9fafb;
+}
+
+.navbar h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Links container */
+.navbar .links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Link styling */
+.navbar a {
+    color: #facc15;
+    /* golden yellow for links */
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+}
+
+.navbar.light a {
+    color: #1f2937;
+}
+
+.navbar a:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Buttons */
+.navbar button {
+    background: #6366f1;
+    /* indigo for theme toggle */
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.navbar button:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+}
+
+/* Logout button distinct */
+.navbar button:last-of-type {
+    background: #ef4444;
+}
+
+.navbar button:last-of-type:hover {
+    background: #dc2626;
+}

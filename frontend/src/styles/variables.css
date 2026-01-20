@@ -1,0 +1,50 @@
+:root {
+    /* 🎨 Color Palette */
+    --color-primary: #007bff;
+    --color-primary-dark: #0056b3;
+    --color-secondary: #6c757d;
+    --color-success: #28a745;
+    --color-danger: #dc3545;
+    --color-warning: #ffc107;
+    --color-info: #17a2b8;
+
+    /* Neutral */
+    --color-text: #222;
+    --color-text-light: #555;
+    --color-bg: #f8f9fa;
+    --color-white: #fff;
+
+    /* 🎬 Seat Colors */
+    --seat-available: #e0e0e0;
+    --seat-selected: #4caf50;
+    --seat-booked: #d32f2f;
+    --seat-locked: #ff9800;
+
+    /* 🧱 Layout */
+    --radius: 6px;
+    --radius-lg: 12px;
+
+    /* ⏱ Transitions */
+    --transition-fast: 0.15s ease;
+    --transition: 0.3s ease;
+
+    /* 📝 Typography */
+    --font-main: "Inter", sans-serif;
+    --font-size-base: 16px;
+    --font-size-sm: 14px;
+    --font-size-lg: 20px;
+
+    /* 🧩 Shadows */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Global resets */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-main);
+    background: var(--color-bg);
+    color: var(--color-text);
+}

@@ -1,0 +1,56 @@
+/* Tickets.css */
+
+.tickets-page {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+}
+
+.tickets-page h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+}
+
+.tickets-page p {
+    margin: 0.75rem 0;
+    font-size: 1rem;
+    color: #374151;
+}
+
+.tickets-page p strong {
+    color: #111827;
+}
+
+/* Status styling */
+.tickets-page p:last-of-type {
+    font-weight: 600;
+}
+
+.tickets-page p:last-of-type {
+    color: #10b981;
+    /* default green for confirmed */
+}
+
+.tickets-page p:last-of-type.cancelled {
+    color: #ef4444;
+    /* red for cancelled */
+}
+
+/* QR code */
+.tickets-page img {
+    margin-top: 1.5rem;
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background: #f9fafb;
+}

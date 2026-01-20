@@ -1,0 +1,99 @@
+/* Register.css */
+
+.auth-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(to right, #212122, #303031);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    padding: 1rem;
+    color: #fff;
+}
+
+.auth-page h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.auth-page form {
+    background: #fff;
+    color: #333;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-page input,
+.auth-page select {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #cccccc00;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.auth-page input:focus,
+.auth-page select:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.auth-page select {
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.auth-page select option {
+    background-color: #fff;
+    color: #333;
+}
+
+.auth-page button {
+    background: #6366f1;
+    color: #fff;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.auth-page button:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+}
+
+.auth-page .error {
+    margin-top: 1rem;
+    color: #dc2626;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.auth-page p {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.auth-page a {
+    color: #facc15;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-page a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,81 @@
+/* CreateBooking.css */
+
+.staff-booking-page {
+    padding: 2rem;
+    background: #f9fafb;
+    min-height: 100vh;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.staff-booking-page h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+    text-align: center;
+}
+
+.staff-booking-page p {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    color: #2563eb;
+}
+
+.staff-booking-page select,
+.staff-booking-page input {
+    width: 100%;
+    max-width: 400px;
+    margin: 0.5rem auto;
+    display: block;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.staff-booking-page select:focus,
+.staff-booking-page input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.customer-info {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.staff-booking-page button {
+    display: block;
+    margin: 2rem auto 0;
+    background: #10b981;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.staff-booking-page button:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+/* SeatMap container styling */
+.staff-booking-page .seat-map {
+    margin: 2rem auto;
+    max-width: 600px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}

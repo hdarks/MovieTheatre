@@ -1,0 +1,67 @@
+.admin-dashboard {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #f9fafb;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", sans-serif;
+}
+
+.admin-dashboard h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #1f2937;
+}
+
+.admin-dashboard .subtitle {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #374151;
+    font-size: 1rem;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: #111827;
+}
+
+.card p {
+    flex-grow: 1;
+    margin-bottom: 1rem;
+    color: #4b5563;
+}
+
+.card .btn {
+    align-self: flex-start;
+    padding: 0.6rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.card .btn:hover {
+    background: #1e40af;
+}

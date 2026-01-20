@@ -1,0 +1,102 @@
+/* Refunds.css */
+
+.refund-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.refund-page h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #1f2937;
+}
+
+.refund-page p {
+    margin: 0.5rem 0;
+    text-align: center;
+    font-weight: 500;
+    color: #059669;
+}
+
+/* Refund list */
+.refund-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.refund-item {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.refund-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.refund-item strong {
+    font-size: 1.2rem;
+    color: #111827;
+}
+
+/* Status text */
+.refund-item p:last-of-type {
+    font-weight: 600;
+}
+
+.refund-item p:last-of-type {
+    color: #2563eb;
+    /* default blue */
+}
+
+.refund-item p:last-of-type:contains("cancelled") {
+    color: #ef4444;
+    /* red */
+}
+
+.refund-item p:last-of-type:contains("refunded") {
+    color: #10b981;
+    /* green */
+}
+
+/* Refund button */
+.refund-item button {
+    margin-top: 0.75rem;
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.refund-item button:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+/* Refunded label */
+.refunded-label {
+    display: inline-block;
+    margin-top: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    background: #10b981;
+    color: #fff;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
