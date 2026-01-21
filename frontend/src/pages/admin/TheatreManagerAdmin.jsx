@@ -10,7 +10,7 @@ export default function TheatreManagerAdmin() {
     const { data: theatres, loading, error } = useFetch(getTheatres, null, []);
     const [selectedTheatre, setSelectedTheatre] = useState(null);
     const [form, setForm] = useState({ name: "", address: "" });
-    const [screenForm, setScreenForm] = useState({ screenId: "", name: "", rows: 0, cols: 0 });
+    const [screenForm, setScreenForm] = useState({ name: "", rows: 0, cols: 0 });
 
     const handleSelectTheatre = async (id) => {
         const res = await getTheatreById(id);
@@ -56,7 +56,6 @@ export default function TheatreManagerAdmin() {
     const handleAddScreen = async () => {
         try {
             await addScreen(selectedTheatre._id, {
-                screenId: screenForm.screenId,
                 name: screenForm.name,
                 layout: {
                     rows: Number(screenForm.rows),
@@ -66,7 +65,7 @@ export default function TheatreManagerAdmin() {
             });
             alert("Screen added successfully");
             await handleSelectTheatre(selectedTheatre._id);
-            setScreenForm({ screenId: "", name: "", rows: 0, cols: 0 });
+            setScreenForm({ name: "", rows: 0, cols: 0 });
         } catch (err) {
             alert("Failed to add screen");
         }
@@ -84,7 +83,7 @@ export default function TheatreManagerAdmin() {
             });
             alert("Screen updated successfully");
             await handleSelectTheatre(selectedTheatre._id);
-            setScreenForm({ screenId: "", name: "", rows: 0, cols: 0 });
+            setScreenForm({ name: "", rows: 0, cols: 0 });
         } catch (err) {
             alert("Failed to update screen");
         }
@@ -131,7 +130,6 @@ export default function TheatreManagerAdmin() {
                 <div className="card">
                     <h3>Edit Theatre</h3>
                     <div className="form-group">
-                        <h3>Edit Theatre</h3>
                         <input className="input" placeholder="Name" value={form.name}
                             onChange={(e) => setForm({ ...form, name: e.target.value })} />
                         <input className="input" placeholder="Address" value={form.address}
@@ -142,18 +140,16 @@ export default function TheatreManagerAdmin() {
                     <h4>Screens</h4>
                     <ul className="list">
                         {selectedTheatre.screens.map((s) => (
-                            <li key={s.screenId} className="list-item">
+                            <li key={s._id} className="list-item">
                                 {s.name} ({s.layout.rows} X {s.layout.cols})
-                                <button className="btn btn-warning" onClick={() => handleUpdateScreen(s.screenId)}>Update Screen</button>
-                                <button className="btn btn-danger" onClick={() => handleRemoveScreen(s.screenId)}>Remove Screen</button>
+                                <button className="btn btn-warning" onClick={() => handleUpdateScreen(s._id)}>Update Screen</button>
+                                <button className="btn btn-danger" onClick={() => handleRemoveScreen(s._id)}>Remove Screen</button>
                             </li>
                         ))}
                     </ul>
 
                     <div className="form-group">
                         <h4>Add new Screen</h4>
-                        <input className="input" placeholder="Screen ID" value={screenForm.screenId}
-                            onChange={(e) => setScreenForm({ ...screenForm, screenId: e.target.value })} />
                         <input className="input" placeholder="Name" value={screenForm.name}
                             onChange={(e) => setScreenForm({ ...screenForm, name: e.target.value })} />
                         <input className="input" type="Number" placeholder="Rows" value={screenForm.rows}

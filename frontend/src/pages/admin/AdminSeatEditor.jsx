@@ -4,6 +4,7 @@ import { getTheatres, getScreenLayout, updateScreenLayout } from "@/api/theatreA
 import { generateSeatGrid } from "@/utils/seatGenerator.js";
 import "@/styles/variables.css";
 import "@/styles/seatMap.css";
+import "./AdminSeatEditor.css";
 
 export default function AdminSeatEditor({ theatreId, screenId }) {
     const { data: theatres, loading: loadingTheatres, error: errorTheatres } = useFetch(getTheatres, [], []);
@@ -85,7 +86,7 @@ export default function AdminSeatEditor({ theatreId, screenId }) {
                         <option value="">-- Select Screen --</option>
                         {theatres.find((t) => t._id === selectedTheatre)
                             ?.screens.map((s) => (
-                                <option key={s.screenId} value={s.screenId}>
+                                <option key={s._id} value={s._id}>
                                     {s.name}
                                 </option>
                             ))}
@@ -102,6 +103,58 @@ export default function AdminSeatEditor({ theatreId, screenId }) {
                         <span><span className="legend-box vip"></span> VIP</span>
                         <span><span className="legend-box accessible"></span> Accessible</span>
                     </div>
+
+                    <div className="bulk-editor">
+                        <label>
+                            Change Seat Type for a Row:
+                            <select onChange={(e) => {
+                                const [rowLabel, type] = e.target.value.split(":");
+                                setLayout((prev) => ({
+                                    ...prev,
+                                    seats: prev.seats.map((s) => s.row === rowLabel ? { ...s, type } : s)
+                                }));
+                            }}>
+                                <option value="">-- Select Row & Type --</option>
+                                {Array.from({ length: layout.rows }, (_, i) => {
+                                    const rowLabel = String.fromCharCode(65 + i);
+                                    return ["standard", "vip", "accessible"].map((type) => (
+                                        <option key={`${rowLabel}:${type}`} value={`${rowLabel}:${type}`}>
+                                            Row {rowLabel} → {type.charAt(0).toUpperCase() + type.slice(1)}
+                                        </option>
+                                    ))
+                                })}
+                            </select>
+                        </label>
+                    </div>
+
+                    <label>
+                        Change Seat Types for Multiple Rows:
+                        <select onChange={(e) => {
+                            const [rows, type] = e.target.value.split(":");
+                            const rowLabels = rows.split(",");
+                            setLayout((prev) => ({
+                                ...prev,
+                                seats: prev.seats.map((s) => rowLabels.includes(s.row) ? { ...s, type } : s)
+                            }));
+                        }}>
+                            <option value="">-- Select Rows & Type --</option>
+                            {Array.from({ length: layout.rows }, (_, i) => String.fromCharCode(65 + i))
+                                .map((rowLabel) => rowLabel)
+                                .reduce((options, rowLabel, i, arr) => {
+                                    if (i % 3 === 0) {
+                                        const group = arr.slice(i, i + 3).join(",");
+                                        ["standard", "vip", "accessible"].forEach((type) => {
+                                            options.push(
+                                                <option key={`${group}:${type}`} value={`${group}:${type}`}>
+                                                    Rows {group} → {type}
+                                                </option>
+                                            );
+                                        });
+                                    }
+                                    return options;
+                                }, [])}
+                        </select>
+                    </label>
                     {layout.seats.length === 0 && (
                         <div style={{ textAlign: "center", marginBottom: "10px" }}>
                             <button onClick={() => {

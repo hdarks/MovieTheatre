@@ -39,19 +39,18 @@ export const getTheatreById = async (req, res) => {
 
 export const addScreen = async (req, res) => {
     try {
-        const { screenId, name, layout } = req.body;
+        const { name, layout } = req.body;
         const theatre = await Theatre.findById(req.params.id);
         if (!theatre) return res.status(404).json({ error: "Theatre not found" });
 
-        if (theatre.screens.some(s => s.screenId === screenId)) {
-            return res.status(404).json({ error: "Screen ID already exists in Theatre" });
-        }
-
-        theatre.screens.push({ screenId, name, layout });
+        const newScreen = { name, layout };
+        theatre.screens.push(newScreen);
         await theatre.save();
+
+        const addedScreen = theatre.screens[theatre.screens.length - 1];
         await logAudit({
             entity: "inventory",
-            entityId: screenId,
+            entityId: addedScreen._id,
             action: "addScreen",
             byUserId: req.user.id,
             meta: req.body
@@ -70,23 +69,25 @@ export const updateScreenLayout = async (req, res) => {
         const theatre = await Theatre.findById(req.params.id);
         if (!theatre) return res.status(404).json({ error: "Theatre not found" });
 
-        const screen = theatre.screens.find(s => s.screenId === screenId);
+        const screen = theatre.screens.id(screenId);
         if (!screen) return res.status(404).json({ error: "Screen not found" });
 
-        if (layout) screen.layout = layout;
-        if (layout?.seats) {
-            const validRows = layout.rows;
-            const validCols = layout.cols;
+        if (layout) {
+            screen.layout.rows = layout.rows;
+            screen.layout.cols = layout.cols;
+            screen.layout.seats = layout.seats;
 
-            const invalidSeats = layout.seats.filter(
-                (s) =>
-                    typeof s.row !== "string" ||
-                    typeof s.col !== "number" ||
-                    s.col < 1 || s.col > validCols ||
-                    s.row.charCodeAt(0) - 65 >= validRows
-            );
-            if (invalidSeats.length > 0) {
-                return res.status(400).json({ error: "Invalid seat cordinates in Layout" });
+            if (layout?.seats) {
+                const invalidSeats = layout.seats.filter(
+                    (s) =>
+                        typeof s.row !== "string" ||
+                        typeof s.col !== "number" ||
+                        s.col < 1 || s.col > layout.cols ||
+                        s.row.charCodeAt(0) - 65 >= layout.rows
+                );
+                if (invalidSeats.length > 0) {
+                    return res.status(400).json({ error: "Invalid seat cordinates in Layout" });
+                }
             }
         }
         if (name) screen.name = name;
@@ -99,7 +100,7 @@ export const updateScreenLayout = async (req, res) => {
             byUserId: req.user.id,
             meta: req.body
         });
-        res.json(theatre);
+        res.json({ message: "Seat array updated successfully.", theatre });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -111,13 +112,10 @@ export const removeScreen = async (req, res) => {
         const theatre = await Theatre.findById(req.params.id);
         if (!theatre) return res.status(404).json({ error: "Theater not found" });
 
-        const removedScreen = theatre.screens.find(s => s.screenId === screenId);
+        const removedScreen = theatre.screens.id(screenId);
         if (!removedScreen) return res.status(404).json({ error: "Screen not found" });
-        theatre.screens = theatre.screens.filter(s => s.screenId !== screenId);
-        // if (theatre.screens.length === before) {
-        //     return res.status(404).json({ error: "Screen not found" });
-        // }
 
+        removedScreen.remove();
         await theatre.save();
         await logAudit({
             entity: "inventory",
@@ -170,11 +168,11 @@ export const getScreenLayout = async (req, res) => {
         const theatre = await Theatre.findById(req.params.id);
         if (!theatre) return res.status(404).json({ error: "Theatre not found" });
 
-        const screen = theatre.screens.find(s => s.screenId === screenId);
+        const screen = theatre.screens.id(screenId);
         if (!screen) return res.status(404).json({ error: "Screen not found" });
 
         res.json(screen.layout);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
-}
+};

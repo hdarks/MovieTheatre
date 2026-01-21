@@ -2,6 +2,7 @@ import Booking from "../model/Booking.js";
 import Showtime from "../model/Showtime.js";
 import { v4 as uuidv4 } from "uuid";
 import { logAudit } from "../utils/auditLogger.js";
+import { io } from "../server.js";
 
 export const createBooking = async (req, res) => {
     try {
@@ -31,6 +32,9 @@ export const createBooking = async (req, res) => {
         });
 
         await booking.save();
+        seats.forEach((s) => {
+            io.of("/showtimes").to(showtimeId).emit("seatBooked", s.seatKey);
+        });
         res.status(201).json(booking);
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -52,6 +56,10 @@ export const confirmBooking = async (req, res) => {
             const bookedKeys = new Set(booking.seats.map(s => s.seatKey));
             showtime.lockedSeats = showtime.lockedSeats.filter(ls => !bookedKeys.has(ls.seatKey));
             await showtime.save();
+
+            booking.seats.forEach((s) => {
+                io.of("/showtimes").to(showtime._id.toString()).emit("seatBooked", s.seatKey);
+            });
         }
         await logAudit({
             entity: "booking",
@@ -74,6 +82,10 @@ export const cancelBooking = async (req, res) => {
 
         booking.status = "cancelled";
         await booking.save();
+
+        booking.seatsforEach((s) => {
+            io.of("/showtimes").to(booking.showtimeId.toString()).emit("seatCancelled", s.seatKey);
+        });
         await logAudit({
             entity: "booking",
             entityId: booking._id,

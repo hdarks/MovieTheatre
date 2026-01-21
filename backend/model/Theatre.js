@@ -18,7 +18,7 @@ const screenSchema = new Schema({
     screenId: { type: String, required: true },
     name: { type: String, required: true },
     layout: { type: layoutSchema, required: true }
-}, { _id: false });
+});
 
 const theatreSchema = new Schema({
     name: { type: String, required: true, trim: true },

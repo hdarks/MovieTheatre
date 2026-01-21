@@ -2,9 +2,14 @@ import { useEffect, useState } from "react";
 import { useSocket } from "@/hooks/useSocket.js";
 import "@/styles/seatMap.css";
 import "@/styles/variables.css";
+import "./SeatMap.css";
 
-export default function SeatMap({ showtimeId, seats = [], rows, cols, onSelect, selected = [] }) {
-    const [lockedSeats, setLockedSeats] = useState([]);
+export default function SeatMap({
+    showtimeId, seats = [], rows, cols, lockedSeats = [],
+    bookedSeats = [], onSelect, selected = []
+}) {
+    const [liveLockedSeats, setLiveLockedSeats] = useState(lockedSeats);
+    const [liveBookedSeats, setLiveBookedSeats] = useState(bookedSeats);
     const socket = useSocket("/showtimes");
 
     useEffect(() => {
@@ -12,15 +17,22 @@ export default function SeatMap({ showtimeId, seats = [], rows, cols, onSelect, 
 
         socket.emit("joinShowtime", { showtimeId });
         socket.on("seatLocked", (seatKey) =>
-            setLockedSeats((prev) => (prev.includes(seatKey) ? prev : [...prev, seatKey]))
+            setLiveLockedSeats((prev) => (prev.includes(seatKey) ? prev : [...prev, seatKey]))
         );
         socket.on("seatUnlocked", (seatKey) =>
-            setLockedSeats((prev) => prev.filter((s) => s !== seatKey))
+            setLiveLockedSeats((prev) => prev.filter((s) => s !== seatKey))
         );
-
+        socket.on("seatBooked", (seatKey) => {
+            setLiveLockedSeats((prev) => prev.filter((s) => s !== seatKey));
+            setLiveBookedSeats((prev) => (prev.includes(seatKey) ? prev : [...prev, seatKey]));
+        });
+        socket.on("seatCancelled", (seatKey) => {
+            setLiveBookedSeats((prev) => prev.filter((s) => s !== seatKey));
+        })
         return () => {
             socket.off("seatLocked");
             socket.off("seatUnlocked");
+            socket.off("seatBooked");
         };
     }, [socket, showtimeId]);
 
@@ -43,9 +55,9 @@ export default function SeatMap({ showtimeId, seats = [], rows, cols, onSelect, 
                     <span className="row-label">{rowLabel}</span>
                     {seats.map((seat) => {
                         const seatKey = `${seat.row}${seat.col}`;
-                        const isLocked = lockedSeats.includes(seatKey);
+                        const isLocked = liveLockedSeats.includes(seatKey);
                         const isSelected = selected.includes(seatKey);
-                        const isBooked = seat.booked;
+                        const isBooked = liveBookedSeats.includes(seatKey);
                         return (
                             <button key={seatKey} disabled={isLocked || isBooked}
                                 className={`seat 

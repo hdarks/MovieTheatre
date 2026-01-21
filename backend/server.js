@@ -61,6 +61,16 @@ showtimeNamespace.on("connection", (socket) => {
         socket.to(showtimeId).emit("seatUnlocked", seatKey);
     });
 
+    socket.on("seatBooked", ({ showtimeId, seatKey }) => {
+        console.log(`Seat Booked: ${seatKey} in showtime ${showtimeId}`);
+        showtimeNamespace.to(showtimeId).emit("seatBooked", seatKey);
+    });
+
+    socket.on("seatCancelled", ({ showtimeId, seatKey }) => {
+        console.log(`Seat cancelled: ${seatKey} in showtime ${showtimeId}`);
+        showtimeNamespace.to(showtimeId).emit("seatCancelled", seatKey);
+    });
+
     socket.on("disconnect", () => {
         console.log("Client disconnected: ", socket.id);
     });
@@ -69,3 +79,5 @@ showtimeNamespace.on("connection", (socket) => {
 server.listen(PORT, () => {
     console.log(`Server Running on ${PORT}`);
 });
+
+export { io };

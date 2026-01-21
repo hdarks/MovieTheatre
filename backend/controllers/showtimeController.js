@@ -21,15 +21,17 @@ export const createShowtime = async (req, res) => {
 
         const theatre = await Theatre.findById(theatreId);
         if (!theatre) return res.status(404).json({ error: "Theatre not found" });
-        if (!theatre.screens.some(s => s.screenId === screenId)) {
+
+        const screen = theatre.screens.id(screenId);
+        if (!screen) {
             return res.status(404).json({ error: "Screen not found in theatre" });
         }
 
-        if (await hasConflict(theatreId, screenId, new Date(startTime), new Date(endTime))) {
+        if (await hasConflict(theatreId, screen._id, new Date(startTime), new Date(endTime))) {
             return res.status(409).json({ error: "Showtime conflicts with existing schedule" });
         }
         const showtime = new Showtime({
-            movieId, theatreId, screenId, startTime, endTime,
+            movieId, theatreId, screenId: screen._id, startTime, endTime,
             language, format, basePrice, pricingRules: pricingRules || []
         });
 
@@ -139,7 +141,7 @@ export const getSeatmap = async (req, res) => {
         const theatre = await Theatre.findById(showtime.theatreId);
         if (!theatre) return res.status(404).json({ error: "Theatre not found" });
 
-        const screen = theatre.screens.find(s => s.screenId === showtime.screenId);
+        const screen = theatre.screens.id(showtime.screenId);
         if (!screen) return res.status(404).json({ error: "Screen not found in theatre." });
 
         const bookings = await Booking.find({

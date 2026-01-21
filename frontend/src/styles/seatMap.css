@@ -96,11 +96,36 @@
 
 .legend-box {
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     margin-right: 8px;
     border-radius: 4px;
     vertical-align: middle;
+}
+
+.legend-box.standard {
+    background-color: #e0e0e0;
+}
+
+.legend-box.vip {
+    background-color: #ffd700;
+}
+
+.legend-box.accessible {
+    background-color: #87ceeb;
+    border: 2px dashed #007bff;
+}
+
+.legend-box.booked {
+    background-color: var(--seat-booked);
+}
+
+.legend-box.locked {
+    background-color: var(--seat-locked);
+}
+
+.legend-box.selected {
+    border: 2px solid var(--seat-selected);
 }
 
 /* Seat type colors */
@@ -121,4 +146,19 @@
     transform: scale(1.05);
     cursor: pointer;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.bulk-editor {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.bulk-editor select {
+    padding: 6px 10px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }

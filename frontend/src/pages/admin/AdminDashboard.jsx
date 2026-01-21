@@ -19,6 +19,11 @@ export default function AdminDashboard() {
                     <Link to="/admin/movies" className="btn">Go to Movie Manager</Link>
                 </div>
                 <div className="card">
+                    <h2>👥 User Manager</h2>
+                    <p>View information of all the users and employees.</p>
+                    <Link to="/admin/users" className="btn">Go to User Manager</Link>
+                </div>
+                <div className="card">
                     <h2>🍿 Concessions</h2>
                     <p>Manage food, drinks, and merchandise inventory.</p>
                     <Link to="/admin/concessions" className="btn">Go to Concession Manager</Link>
@@ -37,6 +42,11 @@ export default function AdminDashboard() {
                     <h2>📊 Analytics</h2>
                     <p>View system-wide analytics and insights.</p>
                     <Link to="/admin/analytics" className="btn">Go to System Analytics</Link>
+                </div>
+                <div className="card">
+                    <h2>💺 Seat Editor</h2>
+                    <p>View and Edit seat layout for the screens.</p>
+                    <Link to="/admin/seats" className="btn">Go to Seat Editor</Link>
                 </div>
             </div>
         </div>

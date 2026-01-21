@@ -18,7 +18,7 @@ const lockedSeatSchema = new Schema({
 const showtimeSchema = new Schema({
     movieId: { type: Schema.Types.ObjectId, ref: 'Movie', required: true },
     theatreId: { type: Schema.Types.ObjectId, ref: 'Theatre', required: true },
-    screenId: { type: String, required: true },
+    screenId: { type: Schema.Types.ObjectId, ref: 'Theatre', required: true },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
     language: { type: String, required: true },
