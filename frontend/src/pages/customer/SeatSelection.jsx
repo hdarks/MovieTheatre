@@ -63,7 +63,7 @@ export default function SeatSelection() {
             <SeatMap
                 showtimeId={showtimeId}
                 seats={seatMap.seats}
-                ows={seatMap.rows}
+                rows={seatMap.rows}
                 cols={seatMap.cols}
                 lockedSeats={seatMap.lockedSeats}
                 bookedSeats={seatMap.bookedSeats}

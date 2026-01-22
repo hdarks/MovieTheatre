@@ -10,7 +10,7 @@ import "./CreateBooking.css";
 
 export default function CreateBooking() {
     const [selectedMovie, setSelectedMovie] = useState("");
-    const [selectedShowtime, setSelectedShowtime] = useState("");
+    const [selectedShowtime, setSelectedShowtime] = useState(null);
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [customerName, setCustomerName] = useState("");
     const [customerPhone, setCustomerPhone] = useState("");
@@ -27,15 +27,16 @@ export default function CreateBooking() {
             return;
         }
         try {
-            const basePrice = 200;
-            const finalPrice = calculatePrice(basePrice, pricingRules || []);
+            const basePrice = selectedShowtime.basePrice;
+            const pricingRules = selectedShowtime.pricingRules || [];
+            const finalPricePerSeat = calculatePrice(basePrice, pricingRules);
 
             await createBooking({
                 showtimeId: selectedShowtime,
                 seats: selectedSeats,
                 customerName,
                 customerPhone,
-                price: finalPrice * selectedSeats.length,
+                price: finalPricePerSeat * selectedSeats.length,
                 bookedByStaff: true
             });
 
@@ -63,11 +64,15 @@ export default function CreateBooking() {
             </select>
 
             {selectedMovie && (
-                <select value={selectedShowtime} onChange={(e) => setSelectedShowtime(e.target.value)}>
+                <select value={selectedShowtime?._id || ""}
+                    onChange={(e) => {
+                        const st = showtimes.find((s) => s._id === e.target.value);
+                        setSelectedShowtime(st || null);
+                    }}>
                     <option value="">Select a showtime</option>
-                    {showtimes.map(s => (
+                    {showtimes.map((s) => (
                         <option key={s._id} value={s._id}>
-                            {new Date(s.startTime).toLocaleString()}
+                            {new Date(s.startTime).toLocaleString()} - ₹{calculatePrice(s.basePrice, s.pricingRules)}
                         </option>
                     ))}
                 </select>

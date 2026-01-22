@@ -54,6 +54,10 @@ export default function TheatreManagerAdmin() {
     };
 
     const handleAddScreen = async () => {
+        if (!screenForm.name || !screenForm.rows || !screenForm.cols) {
+            alert("Please fill all the fields");
+            return;
+        }
         try {
             await addScreen(selectedTheatre._id, {
                 name: screenForm.name,
@@ -115,38 +119,43 @@ export default function TheatreManagerAdmin() {
                 </div>
                 <button className="btn btn-primary" onClick={handleCreateTheatre}>Create Theatre</button>
             </div>
-
-            <h3>All Theatres</h3>
-            <ul className="list">
-                {theatres?.map((t) => (
-                    <li key={t._id} className="list-item">
-                        <button className="btn-link" onClick={() => handleSelectTheatre(t._id)}>{t.name}</button>
-                        <button className="btn btn-danger" onClick={() => handleDeleteTheatre(t._id)}>Delete</button>
-                    </li>
-                ))}
-            </ul>
+            <div className="card">
+                <h3>All Theatres</h3>
+                <ul className="list">
+                    {theatres?.map((t) => (
+                        <li key={t._id} className="list-item">
+                            <button className="btn-link" onClick={() => handleSelectTheatre(t._id)}>{t.name}</button>
+                            <button className="btn btn-danger" onClick={() => handleDeleteTheatre(t._id)}>Delete</button>
+                        </li>
+                    ))}
+                </ul>
+            </div>
 
             {selectedTheatre && (
                 <div className="card">
-                    <h3>Edit Theatre</h3>
+                    <h3>Edit Theatre: {selectedTheatre.name}</h3>
                     <div className="form-group">
                         <input className="input" placeholder="Name" value={form.name}
                             onChange={(e) => setForm({ ...form, name: e.target.value })} />
                         <input className="input" placeholder="Address" value={form.address}
                             onChange={(e) => setForm({ ...form, address: e.target.value })} />
                     </div>
-                    <button className="btn btn-success" onClick={handleUpdateTheatre}>Update</button>
+                    <button className="btn btn-success" onClick={handleUpdateTheatre}>Update Theatre</button>
 
                     <h4>Screens</h4>
-                    <ul className="list">
-                        {selectedTheatre.screens.map((s) => (
-                            <li key={s._id} className="list-item">
-                                {s.name} ({s.layout.rows} X {s.layout.cols})
-                                <button className="btn btn-warning" onClick={() => handleUpdateScreen(s._id)}>Update Screen</button>
-                                <button className="btn btn-danger" onClick={() => handleRemoveScreen(s._id)}>Remove Screen</button>
-                            </li>
-                        ))}
-                    </ul>
+                    {selectedTheatre.screens.length > 0 ? (
+                        <ul className="list">
+                            {selectedTheatre.screens.map((s) => (
+                                <li key={s._id} className="list-item">
+                                    {s.name} ({s.layout.rows} X {s.layout.cols})
+                                    <button className="btn btn-warning" onClick={() => handleUpdateScreen(s._id)}>Update Screen</button>
+                                    <button className="btn btn-danger" onClick={() => handleRemoveScreen(s._id)}>Remove Screen</button>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No Screens in {selectedTheatre.name}</p>
+                    )}
 
                     <div className="form-group">
                         <h4>Add new Screen</h4>

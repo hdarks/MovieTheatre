@@ -43,18 +43,34 @@ export const addScreen = async (req, res) => {
         const theatre = await Theatre.findById(req.params.id);
         if (!theatre) return res.status(404).json({ error: "Theatre not found" });
 
-        const newScreen = { name, layout };
+        if (!name || !layout) {
+            return res.status(400).json({ error: "Screen name and layout are required" });
+        }
+
+        const rows = Number(layout.rows);
+        const cols = Number(layout.cols);
+        const seats = Array.isArray(layout.seats) ? layout.seats : [];
+
+        if (!Number.isInteger(rows) || rows <= 0 || !Number.isInteger(cols) || cols <= 0) {
+            return res.status(400).json({ error: "Layout rows and cols must be positive integers" });
+        }
+
+        const newScreen = { name, layout: { rows, cols, seats } };
         theatre.screens.push(newScreen);
         await theatre.save();
 
         const addedScreen = theatre.screens[theatre.screens.length - 1];
-        await logAudit({
-            entity: "inventory",
-            entityId: addedScreen._id,
-            action: "addScreen",
-            byUserId: req.user.id,
-            meta: req.body
-        });
+        try {
+            await logAudit({
+                entity: "inventory",
+                entityId: addedScreen._id,
+                action: "addScreen",
+                byUserId: req.user.id,
+                meta: req.body
+            });
+        } catch (auditErr) {
+            console.warn("Audit log failed in addScreen", auditErr.message);
+        }
         res.status(201).json(theatre);
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -82,7 +98,8 @@ export const updateScreenLayout = async (req, res) => {
                     (s) =>
                         typeof s.row !== "string" ||
                         typeof s.col !== "number" ||
-                        s.col < 1 || s.col > layout.cols ||
+                        s.col < 1 ||
+                        s.col > layout.cols ||
                         s.row.charCodeAt(0) - 65 >= layout.rows
                 );
                 if (invalidSeats.length > 0) {
@@ -132,7 +149,7 @@ export const removeScreen = async (req, res) => {
 export const updateTheatre = async (req, res) => {
     try {
         const theatre = await Theatre.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!theatre) return res.sta(404).json({ error: "Theatre not found" });
+        if (!theatre) return res.status(404).json({ error: "Theatre not found" });
         await logAudit({
             entity: "inventory",
             entityId: theatre._id,

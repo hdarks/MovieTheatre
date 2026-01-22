@@ -15,7 +15,6 @@ const layoutSchema = new Schema({
 }, { _id: false });
 
 const screenSchema = new Schema({
-    screenId: { type: String, required: true },
     name: { type: String, required: true },
     layout: { type: layoutSchema, required: true }
 });

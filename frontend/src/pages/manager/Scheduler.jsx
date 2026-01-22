@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useFetch } from "@/hooks/useFetch.js";
 import { createShowtime, updateShowtime, cancelShowtime, getShowtimeById, getShowtimes } from "@/api/showtimeApi.js";
 import { getMovies } from "@/api/movieApi.js";
-import { getTheatres } from "@/api/theatreApi.js";
+import { getTheatres, getTheatreById } from "@/api/theatreApi.js";
 import "./Scheduler.css";
 
 export default function Scheduler() {
@@ -21,9 +21,19 @@ export default function Scheduler() {
     });
     const [message, setMessage] = useState(null);
     const [selectedShowtimeId, setSelectedShowtimeId] = useState(null);
+    const [screens, setScreens] = useState([]);
 
     const handleChange = async (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
+
+        if (e.target.name === "theatreId" && e.target.value) {
+            try {
+                const res = await getTheatreById(e.target.value);
+                setScreens(res.data.screens || []);
+            } catch (err) {
+                setScreens([]);
+            }
+        }
     };
 
     const handleCreate = async (e) => {
@@ -61,7 +71,7 @@ export default function Scheduler() {
     const handleView = async (id) => {
         try {
             const res = await getShowtimeById(id);
-            alert(`Showtime Details:\nMovie: ${res.data.movieId}\nStart: ${res.data.startTime}`);
+            alert(`Showtime Details:\nMovie: ${res.data.movieId?.title}\nStart: ${res.data.startTime}`);
         } catch (err) {
             setMessage("Failed to fetch showtime details.");
         }
@@ -74,7 +84,7 @@ export default function Scheduler() {
             setForm({
                 movieId: st.movieId?._id || st.movieId,
                 theatreId: st.theatreId?._id || st.theatreId,
-                screenId: st.screenId,
+                screenId: st.screenId?._id || st.screenId,
                 startTime: toLocaleDatetimeInput(st.startTime),
                 endTime: toLocaleDatetimeInput(st.endTime),
                 language: st.language || "",
@@ -83,6 +93,11 @@ export default function Scheduler() {
             });
             setSelectedShowtimeId(id);
             setMessage("Editing showtime - update fields and save");
+
+            if (st.theatreId?._id || st.theatreId) {
+                const resTheatre = await getTheatreById(st.theatreId?._id || st.theatreId);
+                setScreens(resTheatre.data.screens || []);
+            }
         } catch (err) {
             setMessage("Failed to load showtime for editing.");
         }
@@ -91,6 +106,7 @@ export default function Scheduler() {
     const handleCancelEdit = () => {
         setSelectedShowtimeId(null);
         setForm({ movieId: "", theatreId: "", screenId: "", startTime: "", endTime: "", language: "", format: "", basePrice: "" });
+        setScreens([]);
         setMessage("Edit cancelled. Form reset to Schedule mode");
     };
 
@@ -120,22 +136,22 @@ export default function Scheduler() {
                         <option key={t._id} value={t._id}>{t.name}</option>
                     ))}
                 </select>
-                <input type="text" name="screenId" placeholder="Screen ID"
-                    value={form.screenId} onChange={handleChange} required />
-                <input type="datetime-local" name="startTime"
-                    value={form.startTime} onChange={handleChange} required />
-                <input type="datetime-local" name="endTime"
-                    value={form.endTime} onChange={handleChange} required />
-                <input type="text" name="language" placeholder="Language"
-                    value={form.language} onChange={handleChange} />
+                <select name="screenId" value={form.screenId} onChange={handleChange} required>
+                    <option value="">Select Screen</option>
+                    {screens.map((s) => (
+                        <option key={s._id} value={s._id}>{s.name} - ({s.layout.rows}x{s.layout.cols})</option>
+                    ))}
+                </select>
+                <input type="datetime-local" name="startTime" value={form.startTime} onChange={handleChange} required />
+                <input type="datetime-local" name="endTime" value={form.endTime} onChange={handleChange} required />
+                <input type="text" name="language" placeholder="Language" value={form.language} onChange={handleChange} />
                 <select name="format" value={form.format} onChange={handleChange} required>
                     <option value="">Select Format</option>
                     <option value="2D">2D</option>
                     <option value="3D">3D</option>
                     <option value="IMAX">IMAX</option>
                 </select>
-                <input type="number" name="basePrice" placeholder="Base Price"
-                    value={form.basePrice} onChange={handleChange} />
+                <input type="number" name="basePrice" placeholder="Base Price" value={form.basePrice} onChange={handleChange} />
                 <button type="submit">{selectedShowtimeId ? "💾 Save Update" : "➕ Schedule"}</button>
                 {selectedShowtimeId && (
                     <button type="button" onClick={handleCancelEdit}>❌ Cancel Edit</button>
@@ -147,7 +163,7 @@ export default function Scheduler() {
             <ul>
                 {showtimes?.map((s) => (
                     <li key={s._id}>
-                        🎬 {s.movieId?.title} at {s.theatreId?.name} ({s.screenId})
+                        🎬 {s.movieId?.title} at {s.theatreId?.name} - Screen: {s.screenId?.name || s.screenId}
                         ⏰ {new Date(s.startTime).toLocaleString()} - {new Date(s.endTime).toLocaleString()}
                         <button type="button" onClick={() => handleView(s._id)}>View</button>
                         <button type="button" onClick={() => handleEdit(s._id)}>Edit</button>

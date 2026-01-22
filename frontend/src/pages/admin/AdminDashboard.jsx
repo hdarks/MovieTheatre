@@ -16,7 +16,7 @@ export default function AdminDashboard() {
                 <div className="card">
                     <h2>🎭 Theatres</h2>
                     <p>Manage movie listings, trailers, and metadata.</p>
-                    <Link to="/admin/movies" className="btn">Go to Movie Manager</Link>
+                    <Link to="/admin/theatres" className="btn">Go to Theatre Manager</Link>
                 </div>
                 <div className="card">
                     <h2>👥 User Manager</h2>

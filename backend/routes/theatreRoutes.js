@@ -16,9 +16,8 @@ import { requireRole } from "../middleware/roleMiddleware.js";
 const router = express.Router();
 
 router.get("/", getTheatres);
-router.get("/:id", getTheatreById);
-
 router.post("/", authMiddleware, requireRole("manager", "admin"), createTheatre);
+router.get("/:id", getTheatreById);
 router.patch("/:id", authMiddleware, requireRole("manager", "admin"), updateTheatre);
 router.delete("/:id", authMiddleware, requireRole("admin"), deleteTheatre);
 

@@ -20,7 +20,7 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(cors({ origin: "http://localhost:5173", methods: ["GET", "POST", "PATCH", "PUT"] }));
+app.use(cors({ origin: "http://localhost:5173", methods: ["GET", "POST", "PATCH", "PUT", "DELETE"] }));
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
@@ -39,7 +39,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:5173",
-        methods: ["GET", "POST", "PATCH", "PUT"]
+        methods: ["GET", "POST", "PATCH", "PUT", "DELETE"]
     }
 });
 
