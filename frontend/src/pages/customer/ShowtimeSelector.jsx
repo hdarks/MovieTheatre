@@ -27,7 +27,7 @@ export default function ShowtimeSelector() {
                 {filtered.map((s) => (
                     <li key={s._id}>
                         <Link to={`/seats/${s._id}`}>
-                            {new Date(s.startTime).toLocaleString()} - {s.theatreName}
+                            {new Date(s.startTime).toLocaleString()} - {s.theatreId.name}
                         </Link>
                     </li>
                 ))}

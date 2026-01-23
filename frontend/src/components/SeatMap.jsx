@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
-import { useSocket } from "@/hooks/useSocket.js";
 import "@/styles/seatMap.css";
 import "@/styles/variables.css";
 import "./SeatMap.css";
 
 export default function SeatMap({
     showtimeId, seats = [], rows, cols, lockedSeats = [],
-    bookedSeats = [], onSelect, selected = []
+    bookedSeats = [], onSelect, selected = [], socket
 }) {
     const [liveLockedSeats, setLiveLockedSeats] = useState(lockedSeats);
     const [liveBookedSeats, setLiveBookedSeats] = useState(bookedSeats);
-    const socket = useSocket("/showtimes");
 
     useEffect(() => {
         if (!socket) return;
@@ -33,6 +31,7 @@ export default function SeatMap({
             socket.off("seatLocked");
             socket.off("seatUnlocked");
             socket.off("seatBooked");
+            socket.off("seatCancelled");
         };
     }, [socket, showtimeId]);
 
@@ -42,8 +41,6 @@ export default function SeatMap({
         const rowSeats = seats.filter((s) => s.row === rowLetter);
         seatRows.push({ rowLabel: rowLetter, seats: rowSeats });
     }
-
-    console.log("SeatMap props: ", { showtimeId, rows, cols });
 
     if (!rows || !cols) return <p>No Seat Map Available.</p>;
 

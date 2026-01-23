@@ -6,16 +6,36 @@
     padding: 2rem;
     background: #ffffff;
     border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: var(--shadow-md);
+    font-family: var(--font-main);
 }
 
 .checkout-page h2 {
     font-size: 1.8rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
-    color: #1f2937;
+    color: var(--color-primary-dark);
     text-align: center;
+}
+
+.checkout-details p,
+.checkout-seats p {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+}
+
+.checkout-seats ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 1rem 0;
+}
+
+.checkout-seats li {
+    background: var(--color-bg);
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.4rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
 }
 
 .checkout-page p {
@@ -31,20 +51,19 @@
 .checkout-page button {
     display: block;
     width: 100%;
-    margin-top: 2rem;
     padding: 0.75rem 1rem;
-    background: #10b981;
+    background: var(--color-success);
     /* emerald green */
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
+    transition: background var(--transition);
 }
 
 .checkout-page button:hover {
-    background: #059669;
+    background: #218838;
     transform: translateY(-2px);
 }

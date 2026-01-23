@@ -83,7 +83,7 @@ export const cancelBooking = async (req, res) => {
         booking.status = "cancelled";
         await booking.save();
 
-        booking.seatsforEach((s) => {
+        booking.seats.forEach((s) => {
             io.of("/showtimes").to(booking.showtimeId.toString()).emit("seatCancelled", s.seatKey);
         });
         await logAudit({
@@ -147,4 +147,4 @@ export const getBookings = async (req, res) => {
         console.error("Error fetching bookings:", err);
         res.status(500).json({ error: "Failed to fetch bookings" });
     }
-}
+};

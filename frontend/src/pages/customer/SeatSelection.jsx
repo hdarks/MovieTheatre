@@ -4,7 +4,10 @@ import { getSeatMap, lockSeat } from "@/api/showtimeApi.js";
 import SeatMap from "@/components/SeatMap";
 import { useState } from "react";
 import { calculatePrice } from "@/utils/calculatePrice.js";
+import { useSocket } from "@/hooks/useSocket.js";
 import "./SeatSelection.css";
+import "@/styles/variables.css";
+import "@/styles/seatMap.css";
 
 export default function SeatSelection() {
     const { showtimeId } = useParams();
@@ -12,11 +15,11 @@ export default function SeatSelection() {
     const { data: seatMap, loading, error } = useFetch(() => getSeatMap(showtimeId), null, [showtimeId]);
     const [selected, setSelected] = useState([]);
 
+    const socket = useSocket("/showtimes");
+
     if (loading) return <p>Loading seats...</p>;
     if (error) return <p>Error loading seats.</p>;
     if (!seatMap) return <p>No seat map available.</p>;
-
-    console.log("Fetched seatMap: ", seatMap);
 
     const handleSelect = async (seatKey) => {
         if (seatMap.lockedSeats.includes(seatKey) || seatMap.bookedSeats.includes(seatKey)) {
@@ -26,12 +29,7 @@ export default function SeatSelection() {
         if (selected.includes(seatKey)) {
             setSelected((prev) => prev.filter((s) => s !== seatKey));
         } else {
-            try {
-                await lockSeat(showtimeId, seatKey);
-                setSelected((prev) => [...prev, seatKey]);
-            } catch (err) {
-                console.error("Failed to lock seat: ", err);
-            }
+            setSelected((prev) => [...prev, seatKey]);
         }
     };
 
@@ -42,7 +40,18 @@ export default function SeatSelection() {
     });
 
     const proceedCheckout = () => {
-        navigate("/checkout", { state: { showtimeId, seats: sortedSeats } });
+        navigate("/checkout", {
+            state: {
+                showtimeId,
+                seats: sortedSeats.map(seatKey => ({
+                    seatKey,
+                    pricePaid: calculatePrice(seatMap.basePrice, seatMap.pricingRules)
+                })),
+                basePrice: seatMap.basePrice,
+                pricingRules: seatMap.pricingRules,
+                showtime: seatMap.showtime
+            }
+        });
     };
 
     const clearSelection = () => setSelected([]);
@@ -52,12 +61,24 @@ export default function SeatSelection() {
             <h2>Select Seats</h2>
 
             <div className="seat-legend">
-                <span><span className="legend-box standard"> Standard</span></span>
-                <span><span className="legend-box vip"> VIP</span></span>
-                <span><span className="legend-box accessible"> Accessible</span></span>
-                <span><span className="legend-box Booked"> Booked</span></span>
-                <span><span className="legend-box locked"> Locked</span></span>
-                <span><span className="legend-box selected"> Selected</span></span>
+                <div className="legend-item">
+                    <span className="legend-circle standard"></span> Standard
+                </div>
+                <div className="legend-item">
+                    <span className="legend-circle vip"></span> VIP
+                </div>
+                <div className="legend-item">
+                    <span className="legend-circle accessible"></span> Accessible
+                </div>
+                <div className="legend-item">
+                    <span className="legend-circle Booked"></span> Booked
+                </div>
+                <div className="legend-item">
+                    <span className="legend-circle locked"></span> Locked
+                </div>
+                <div className="legend-item">
+                    <span className="legend-circle selected"></span> Selected
+                </div>
             </div>
 
             <SeatMap
@@ -69,6 +90,7 @@ export default function SeatSelection() {
                 bookedSeats={seatMap.bookedSeats}
                 onSelect={handleSelect}
                 selected={selected}
+                socket={socket}
             />
             <div className="selected-info">
                 <p>Selected Seats :{selected.join(", ") || "None"}</p>

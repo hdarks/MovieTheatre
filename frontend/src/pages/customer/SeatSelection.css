@@ -1,7 +1,7 @@
 /* SeatSelection.css */
 
 .seat-page {
-    max-width: 900px;
+    max-width: 1200px;
     margin: 2rem auto;
     padding: 2rem;
     background: #ffffff;
@@ -18,13 +18,147 @@
     text-align: center;
 }
 
-/* SeatMap container */
-.seat-page .seat-map {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
-    gap: 0.5rem;
-    justify-items: center;
+/* Legend panel */
+.seat-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+}
+
+.legend-box {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 500;
+    color: #fff;
+}
+
+/* Legend item container */
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Circular legend badge */
+.legend-circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Seat type colors */
+.legend-circle.standard {
+    background-color: var(--seat-available);
+}
+
+.legend-circle.vip {
+    background-color: #ffd700;
+}
+
+.legend-circle.accessible {
+    background-color: #87ceeb;
+    border: 2px dashed var(--color-info);
+}
+
+.legend-circle.locked {
+    background-color: var(--seat-locked);
+}
+
+.legend-circle.booked {
+    background-color: var(--seat-booked);
+}
+
+.legend-circle.selected {
+    background-color: var(--seat-selected);
+    border: 2px solid var(--color-primary-dark);
+}
+
+/* SeatMap layout */
+.seatmap-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
     margin: 2rem 0;
+}
+
+.screen {
+    background: #3b82f6;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.seat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.row-label {
+    font-weight: 600;
+    margin-right: 0.5rem;
+    width: 2rem;
+    text-align: center;
+    color: #1f2937;
+}
+
+.seat {
+    width: 40px;
+    height: 40px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.seat:hover:enabled {
+    transform: scale(1.05);
+}
+
+.seat.standard {
+    background: #6b7280;
+    color: #fff;
+}
+
+.seat.vip {
+    background: #fbbf24;
+    color: #000;
+}
+
+.seat.accessible {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.seat.booked {
+    background: #ef4444;
+    color: #fff;
+    cursor: not-allowed;
+}
+
+.seat.locked {
+    background: #f97316;
+    color: #fff;
+    cursor: not-allowed;
+}
+
+.seat.selected {
+    background: #10b981;
+    color: #fff;
 }
 
 /* Selected info */
@@ -39,15 +173,16 @@
     color: #374151;
 }
 
-/* Proceed button */
-.seat-page button {
-    display: block;
-    width: 100%;
+/* Action buttons */
+.actions {
+    display: flex;
+    gap: 1rem;
     margin-top: 1.5rem;
-    padding: 0.75rem 1rem;
-    background: #10b981;
-    /* emerald green */
-    color: #fff;
+    justify-content: center;
+}
+
+.actions .btn {
+    padding: 0.75rem 1.2rem;
     border: none;
     border-radius: 8px;
     font-size: 1rem;
@@ -56,12 +191,29 @@
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.seat-page button:hover:enabled {
-    background: #059669;
+.actions .btn:hover:enabled {
     transform: translateY(-2px);
 }
 
-.seat-page button:disabled {
+.btn-secondary {
+    background: #6b7280;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+.actions .btn:disabled {
     background: #9ca3af;
     cursor: not-allowed;
+}
+
+.actions .btn-primary {
+    background: #10b981;
+    color: #fff;
+}
+
+.actions .btn-primary:hover {
+    background: #059669;
 }
