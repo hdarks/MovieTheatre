@@ -9,6 +9,7 @@ export default function SeatMap({
 }) {
     const [liveLockedSeats, setLiveLockedSeats] = useState(lockedSeats);
     const [liveBookedSeats, setLiveBookedSeats] = useState(bookedSeats);
+    const [livePendingSeats, setLivePendingSeats] = useState([]);
 
     useEffect(() => {
         if (!socket) return;
@@ -20,17 +21,23 @@ export default function SeatMap({
         socket.on("seatUnlocked", (seatKey) =>
             setLiveLockedSeats((prev) => prev.filter((s) => s !== seatKey))
         );
-        socket.on("seatBooked", (seatKey) => {
+        socket.on("seatPending", (seatKey) => {
+            setLivePendingSeats((prev) => prev.includes(seatKey) ? prev : [...prev, seatKey])
+        });
+        socket.on("seatConfirmed", (seatKey) => {
+            setLivePendingSeats((prev) => prev.filter((s) => s !== seatKey));
             setLiveLockedSeats((prev) => prev.filter((s) => s !== seatKey));
-            setLiveBookedSeats((prev) => (prev.includes(seatKey) ? prev : [...prev, seatKey]));
+            setLiveBookedSeats((prev) => prev.includes(seatKey) ? prev : [...prev, seatKey]);
         });
         socket.on("seatCancelled", (seatKey) => {
             setLiveBookedSeats((prev) => prev.filter((s) => s !== seatKey));
-        })
+            setLivePendingSeats((prev) => prev.filter((s) => s !== seatKey));
+        });
         return () => {
             socket.off("seatLocked");
             socket.off("seatUnlocked");
-            socket.off("seatBooked");
+            socket.off("seatPending");
+            socket.off("seatConfirmed");
             socket.off("seatCancelled");
         };
     }, [socket, showtimeId]);
@@ -53,14 +60,17 @@ export default function SeatMap({
                     {seats.map((seat) => {
                         const seatKey = `${seat.row}${seat.col}`;
                         const isLocked = liveLockedSeats.includes(seatKey);
+                        const isPending = livePendingSeats.includes(seatKey);
                         const isSelected = selected.includes(seatKey);
                         const isBooked = liveBookedSeats.includes(seatKey);
+
+                        let seatClass = "available";
+                        if (isBooked) seatClass = "confirmed";
+                        else if (isPending) seatClass = "pending";
+                        else if (isLocked) seatClass = "locked";
                         return (
-                            <button key={seatKey} disabled={isLocked || isBooked}
-                                className={`seat 
-                                ${isBooked ? "booked" : isLocked ? "locked" : "available"}
-                                ${isSelected ? "selected" : ""}
-                                ${seat.type}`}
+                            <button key={seatKey} disabled={isLocked || isBooked || isPending}
+                                className={`seat ${seatClass} ${isSelected ? "selected" : ""} ${seat.type}`}
                                 onClick={() => {
                                     if (isSelected) {
                                         socket.emit("unlockSeat", { showtimeId, seatKey });

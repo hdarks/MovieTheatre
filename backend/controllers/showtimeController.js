@@ -74,7 +74,9 @@ export const getShowtimes = async (req, res) => {
 
 export const getShowtimeById = async (req, res) => {
     try {
-        const showtime = await Showtime.findById(req.params.id);
+        const showtime = await Showtime.findById(req.params.id)
+            .populate("movieId", "title")
+            .populate("theatreId", "name");
         if (!showtime) return res.status(404).json({ error: "Showtime not found" });
         res.json(showtime);
     } catch (err) {
@@ -155,7 +157,10 @@ export const getSeatmap = async (req, res) => {
             cols: screen.layout.cols,
             seats: screen.layout.seats,
             lockedSeats: showtime.lockedSeats.map((ls) => ls.seatKey),
-            bookedSeats: Array.from(bookedSet)
+            bookedSeats: Array.from(bookedSet),
+            basePrice: showtime.basePrice,
+            pricingRules: showtime.pricingRules,
+            showtime
         });
     } catch (err) {
         console.error("Error in getSeatmap:", err);
@@ -176,13 +181,19 @@ export const lockSeats = async (req, res) => {
         const bookings = await Booking.find({ showtimeId: st._id, status: { $in: ["pending", "confirmed"] } }).select("seats");
         const bookedSet = new Set(bookings.flatMap(b => b.seats.map(s => s.seatKey)));
 
-        const requested = Array.isArray(seatKeys) ? seatKeys : [];
+        const requested = Array.isArray(seatKeys)
+            ? seatKeys.map(k => {
+                if (typeof k === "string") return k;
+                if (typeof k === "object" && k.row && k.col) return `${k.row}${k.col}`;
+                return String(k);
+            })
+            : [];
         const unavailable = requested.filter(k => existingLocks.has(k) || bookedSet.has(k));
         if (unavailable.length) {
-            return res.status(404).json({ error: "Some seats are available", seats: unavailable });
+            return res.status(409).json({ error: "Some seats are unavailable", seats: unavailable });
         }
 
-        const expiresAt = new Date(now + ttlSeconds * 1000);
+        const expiresAt = new Date(now.getTime() + ttlSeconds * 1000);
         for (const k of requested) {
             st.lockedSeats.push({ seatKey: k, bySessionId: sessionId, expiresAt });
         }
@@ -199,7 +210,15 @@ export const releaseLocks = async (req, res) => {
         const { sessionId, seatKeys } = req.body;
         const st = await Showtime.findById(req.params.id);
         if (!st) return res.status(404).json({ error: "Showtime not found" });
-        const keysSet = seatKeys ? new Set(seatKeys) : null;
+
+        const normalizedKeys = Array.isArray(seatKeys)
+            ? seatKeys.map(k => {
+                if (typeof k === "string") return k;
+                if (typeof k === "object" && k.row && k.col) return `${k.row}${k.col}`;
+                return String(k);
+            })
+            : [];
+        const keysSet = normalizedKeys.length ? new Set(normalizedKeys) : null;
         st.lockedSeats = st.lockedSeats.filter(ls => {
             const sameSession = ls.bySessionId === sessionId;
             const targeted = keysSet ? keysSet.has(ls.seatKey) : true;

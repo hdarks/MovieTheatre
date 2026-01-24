@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useFetch } from "@/hooks/useFetch.js";
-import { getSeatMap, lockSeat } from "@/api/showtimeApi.js";
+import { getSeatMap, getShowtimeById, lockSeat, releaseLockSeat } from "@/api/showtimeApi.js";
 import SeatMap from "@/components/SeatMap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { calculatePrice } from "@/utils/calculatePrice.js";
 import { useSocket } from "@/hooks/useSocket.js";
 import "./SeatSelection.css";
@@ -13,23 +13,68 @@ export default function SeatSelection() {
     const { showtimeId } = useParams();
     const navigate = useNavigate();
     const { data: seatMap, loading, error } = useFetch(() => getSeatMap(showtimeId), null, [showtimeId]);
+    const { data: showtime } = useFetch(() => getShowtimeById(showtimeId), null, [showtimeId]);
     const [selected, setSelected] = useState([]);
+    const [seatState, setSeatState] = useState(seatMap);
 
     const socket = useSocket("/showtimes");
 
-    if (loading) return <p>Loading seats...</p>;
+    useEffect(() => {
+        return () => {
+            try {
+                if (selected.length > 0 && socket?.id) {
+                    releaseLockSeat(showtimeId, selected, socket.id);
+                }
+            } catch (err) {
+                console.error("Cleanup Failed: ", err);
+            }
+        };
+    }, [selected, showtimeId, socket?.id]);
+
+    useEffect(() => {
+        if (!socket) return;
+        socket.on("seatPending", (seatKey) => {
+            console.log("Seat Pending: ", seatKey);
+            setSeatState((prev) => ({ ...prev, lockedSeats: [...prev.lockedSeats, seatKey] }));
+        });
+        socket.on("seatConfirmed", (seatKey) => {
+            console.log("Seat Confirmed: ", seatKey);
+            setSeatState((prev) => ({
+                ...prev,
+                bookedSeats: [...prev.bookedSeats, seatKey],
+                lockedSeats: prev.lockedSeats.filter((s) => s !== seatKey)
+            }));
+        });
+        return () => {
+            socket.off("seatPending");
+            socket.off("seatConfirmed");
+        };
+    }, [socket]);
+
+    if (loading || !showtime) return <p>Loading seats...</p>;
     if (error) return <p>Error loading seats.</p>;
     if (!seatMap) return <p>No seat map available.</p>;
 
     const handleSelect = async (seatKey) => {
-        if (seatMap.lockedSeats.includes(seatKey) || seatMap.bookedSeats.includes(seatKey)) {
+        if (seatState?.lockedSeats?.includes(seatKey) || seatState?.bookedSeats?.includes(seatKey)) {
             alert("This seat is unavailable.");
             return;
         }
         if (selected.includes(seatKey)) {
             setSelected((prev) => prev.filter((s) => s !== seatKey));
+            if (socket?.id) {
+                await releaseLockSeat(showtimeId, [seatKey], socket.id);
+            }
         } else {
-            setSelected((prev) => [...prev, seatKey]);
+            try {
+                if (socket?.id) {
+                    await lockSeat(showtimeId, [seatKey], socket.id);
+                    setSelected((prev) => [...prev, seatKey]);
+                }
+            } catch (err) {
+                console.error("Failed to lock seat.", err);
+                alert("Unable to lock seat. Please try again!");
+            }
         }
     };
 
@@ -43,18 +88,24 @@ export default function SeatSelection() {
         navigate("/checkout", {
             state: {
                 showtimeId,
-                seats: sortedSeats.map(seatKey => ({
+                seats: sortedSeats.map((seatKey) => ({
                     seatKey,
-                    pricePaid: calculatePrice(seatMap.basePrice, seatMap.pricingRules)
+                    pricePaid: calculatePrice(Number(seatMap.basePrice), seatMap.pricingRules)
                 })),
                 basePrice: seatMap.basePrice,
                 pricingRules: seatMap.pricingRules,
-                showtime: seatMap.showtime
+                showtime,
+                sessionId: socket?.id
             }
         });
     };
 
-    const clearSelection = () => setSelected([]);
+    const clearSelection = () => {
+        if (selected.length > 0) {
+            releaseLockSeat(showtimeId, selected, socket.id);
+        }
+        setSelected([]);
+    };
 
     return (
         <div className="seat-page">
@@ -97,7 +148,7 @@ export default function SeatSelection() {
                 {seatMap.basePrice && selected.length > 0 && (
                     <p>
                         Total Price: ₹
-                        {selected.reduce((sum, seatKey) => sum + calculatePrice(seatMap.basePrice, seatMap.pricingRules), 0)}
+                        {selected.reduce((sum, seatKey) => sum + calculatePrice(Number(seatMap.basePrice || 0), seatMap.pricingRules || []), 0)}
                     </p>
                 )}
             </div>

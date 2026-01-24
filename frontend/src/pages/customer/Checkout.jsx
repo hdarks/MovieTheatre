@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { createBooking } from "@/api/bookingApi.js";
-import { calculatePrice } from "@/utils/calculatePrice.js";
+import { v4 as uuidv4 } from "uuid";
 import "./Checkout.css";
 
 export default function Checkout() {
@@ -9,15 +9,21 @@ export default function Checkout() {
 
     const handleConfirm = async () => {
         try {
+            console.log("Booking Payload: ", {
+                showtimeId: state?.showtimeId,
+                seats: state?.seats,
+                sessionId: state?.sessionId
+            });
             const res = await createBooking({
                 showtimeId: state?.showtimeId,
                 seats: state?.seats || [],
+                sessionId: state?.sessionId,
                 payment: {
                     provider: "mock",
                     intentId: uuidv4(),
-                    amount: formattedSeats.reduce((sum, s) => sum + s.pricePaid, 0),
+                    amount: state.seats.reduce((sum, s) => sum + s.pricePaid, 0),
                     currency: "INR",
-                    captured: "false"
+                    captured: false
                 }
             });
             navigate("/tickets", { state: { bookingId: res.data._id } });
@@ -34,10 +40,10 @@ export default function Checkout() {
             {state.showtime ? (
                 <>
                     <div className="checkout-details">
-                        <p><strong>Movie:</strong> {state.showtime.movieTitle}</p>
+                        <p><strong>Movie:</strong> {state.showtime.movieId.title}</p>
                         <p><strong>Showtime:</strong> {new Date(state.showtime.startTime).toLocaleDateString()}</p>
-                        {state.showtime.theatreName && (
-                            <p><strong>Theatre: </strong>{state.showtime.theatreName}</p>
+                        {state.showtime.theatreId && (
+                            <p><strong>Theatre: </strong>{state.showtime.theatreId.name}</p>
                         )}
                     </div>
                 </>

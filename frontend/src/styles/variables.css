@@ -16,9 +16,15 @@
 
     /* 🎬 Seat Colors */
     --seat-available: #e0e0e0;
+    /* neutral grey */
     --seat-selected: #4caf50;
-    --seat-booked: #d32f2f;
-    --seat-locked: #ff9800;
+    /* green */
+    --seat-pending: #ffb74d;
+    /* amber/orange for temporary hold */
+    --seat-confirmed: #b71c1c;
+    /* deep red for fully booked */
+    --seat-locked: #9c27b0;
+    /* purple for locked by another user */
 
     /* 🧱 Layout */
     --radius: 6px;

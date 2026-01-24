@@ -43,22 +43,28 @@
 
 /* Seat states */
 .seat.available {
-    background: var(--seat-available);
+    background-color: var(--seat-available);
+    color: #000;
 }
 
 .seat.selected {
-    background: var(--seat-selected);
-    border-color: var(--color-primary-dark);
+    background-color: var(--seat-selected);
+    color: #fff;
 }
 
-.seat.booked {
-    background: var(--seat-booked);
-    cursor: not-allowed;
+.seat.pending {
+    background-color: var(--seat-pending);
+    color: #fff;
+}
+
+.seat.confirmed {
+    background-color: var(--seat-confirmed);
+    color: #fff;
 }
 
 .seat.locked {
-    background: var(--seat-locked);
-    cursor: not-allowed;
+    background-color: var(--seat-locked);
+    color: #fff;
 }
 
 /* Hover effect */

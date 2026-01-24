@@ -61,6 +61,16 @@ showtimeNamespace.on("connection", (socket) => {
         socket.to(showtimeId).emit("seatUnlocked", seatKey);
     });
 
+    socket.on("seatPending", ({ showtimeId, seatKey }) => {
+        console.log(`Seat pending: ${seatKey} in showtime ${showtimeId}`);
+        showtimeNamespace.to(showtimeId).emit("seatPending", seatKey);
+    });
+
+    socket.on("seatConfirmed", ({ showtimeId, seatKey }) => {
+        console.log(`Seat confirmed: ${seatKey} in showtime ${showtimeId}`);
+        showtimeNamespace.to(showtimeId).emit("seatConfirmed", seatKey);
+    });
+
     socket.on("seatBooked", ({ showtimeId, seatKey }) => {
         console.log(`Seat Booked: ${seatKey} in showtime ${showtimeId}`);
         showtimeNamespace.to(showtimeId).emit("seatBooked", seatKey);

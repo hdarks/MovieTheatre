@@ -1,11 +1,14 @@
 export const calculatePrice = (basePrice, pricingRules = []) => {
-    let price = basePrice;
+    let price = Number(basePrice);
+    if (isNaN(price)) return 0;
 
     pricingRules.forEach(rule => {
+        const value = Number(rule.value);
+        if (isNaN(value)) return;
         if (rule.op === "add") {
-            price += rule.value;
+            price += value;
         } else if (rule.op === "mul") {
-            price *= rule.value;
+            price *= value;
         }
     });
 

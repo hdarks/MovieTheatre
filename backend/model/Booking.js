@@ -21,7 +21,8 @@ const bookingSchema = new Schema({
     seats: { type: [seatSchema], required: true },
     status: { type: String, enum: ["pending", "confirmed", "cancelled", "refunded"], default: "pending" },
     payment: { type: paymentSchema, required: true },
-    qrCode: { type: String, required: true }
+    qrCode: { type: String, required: true },
+    sessionId: { type: String, required: true }
 }, { timestamps: true });
 
 bookingSchema.index({ userId: 1, createdAt: -1 });
