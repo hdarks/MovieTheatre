@@ -15,6 +15,10 @@ const lockedSeatSchema = new Schema({
     bySessionId: { type: String, required: true }
 }, { _id: false });
 
+const bookedSeatSchema = new Schema({
+    seatKey: { type: String, required: true }
+}, { _id: false });
+
 const showtimeSchema = new Schema({
     movieId: { type: Schema.Types.ObjectId, ref: 'Movie', required: true },
     theatreId: { type: Schema.Types.ObjectId, ref: 'Theatre', required: true },
@@ -26,7 +30,8 @@ const showtimeSchema = new Schema({
     basePrice: { type: Number, required: true, min: 0 },
     pricingRules: { type: [pricingRuleSchema], default: [] },
     status: { type: String, enum: ["scheduled", "cancelled"], default: "scheduled" },
-    lockedSeats: { type: [lockedSeatSchema], default: [] }
+    lockedSeats: { type: [lockedSeatSchema], default: [] },
+    bookedSeats: { type: [bookedSeatSchema], default: [] }
 }, { timestamps: { createdAt: true, updatedAt: true } });
 
 showtimeSchema.index({ theatreId: 1, startTime: 1 });

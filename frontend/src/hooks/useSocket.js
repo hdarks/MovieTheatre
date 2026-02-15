@@ -13,6 +13,7 @@ export const useSocket = (namespace = "/", options = {}) => {
 
         socketRef.current.on("connect", () => {
             console.log("Connected: ", socketRef.current.id);
+            localStorage.setItem("sessionId", socketRef.current.id);
         });
 
         socketRef.current.on("connect_err", (err) => {

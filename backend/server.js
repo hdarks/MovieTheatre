@@ -16,6 +16,9 @@ import auditRoutes from "./routes/auditRoutes.js";
 import pricingRoutes from "./routes/pricingRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 
+import { lockSeats, releaseLocks } from "./controllers/showtimeController.js";
+import Showtime from "./model/Showtime.js";
+
 dotenv.config();
 connectDB();
 
@@ -53,12 +56,14 @@ showtimeNamespace.on("connection", (socket) => {
         console.log(`Socket ${socket.id} joined showtime ${showtimeId}`);
     });
 
-    socket.on("lockSeat", ({ showtimeId, seatKey }) => {
-        socket.to(showtimeId).emit("seatLocked", seatKey);
+    socket.on("lockSeat", async ({ showtimeId, seatKey }) => {
+        console.log(`Seat locked: ${seatKey} in showtime ${showtimeId}`);
+        showtimeNamespace.to(showtimeId).emit("seatLocked", seatKey);
     });
 
-    socket.on("unlockSeat", ({ showtimeId, seatKey }) => {
-        socket.to(showtimeId).emit("seatUnlocked", seatKey);
+    socket.on("unlockSeat", async ({ showtimeId, seatKey }) => {
+        console.log(`Seat unlocked: ${seatKey} in showtime ${showtimeId}`);
+        showtimeNamespace.to(showtimeId).emit("seatUnlocked", seatKey);
     });
 
     socket.on("seatPending", ({ showtimeId, seatKey }) => {
@@ -71,18 +76,29 @@ showtimeNamespace.on("connection", (socket) => {
         showtimeNamespace.to(showtimeId).emit("seatConfirmed", seatKey);
     });
 
-    socket.on("seatBooked", ({ showtimeId, seatKey }) => {
-        console.log(`Seat Booked: ${seatKey} in showtime ${showtimeId}`);
-        showtimeNamespace.to(showtimeId).emit("seatBooked", seatKey);
-    });
-
     socket.on("seatCancelled", ({ showtimeId, seatKey }) => {
         console.log(`Seat cancelled: ${seatKey} in showtime ${showtimeId}`);
         showtimeNamespace.to(showtimeId).emit("seatCancelled", seatKey);
     });
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
         console.log("Client disconnected: ", socket.id);
+        try {
+            const showtimes = await Showtime.find({ "lockedSeats.bySessionId": socket.id });
+            for (const st of showtimes) {
+                const releasedSeats = st.lockedSeats
+                    .filter(ls => ls.bySessionId === socket.id)
+                    .map(ls => ls.seatKey);
+
+                st.lockedSeats = st.lockedSeats.filter(ls => ls.bySessionId !== socket.id);
+                await st.save();
+                releasedSeats.forEach(seatKey => {
+                    showtimeNamespace.to(st._id.toString()).emit("seatUnlocked", seatKey);
+                });
+            }
+        } catch (err) {
+            console.error("Error releasing locks on disconnect:", err.message);
+        }
     });
 });
 

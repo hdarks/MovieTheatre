@@ -1,23 +1,28 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { createBooking } from "@/api/bookingApi.js";
+import { releaseLockSeat } from "@/api/showtimeApi.js";
 import { v4 as uuidv4 } from "uuid";
+import { useSocket } from "@/hooks/useSocket.js";
+import { useEffect } from "react";
 import "./Checkout.css";
 
 export default function Checkout() {
     const { state } = useLocation();
     const navigate = useNavigate();
+    const socket = useSocket("/showtimes");
 
     const handleConfirm = async () => {
         try {
+            const sessionId = localStorage.getItem("sessionId");
             console.log("Booking Payload: ", {
                 showtimeId: state?.showtimeId,
                 seats: state?.seats,
-                sessionId: state?.sessionId
+                sessionId
             });
             const res = await createBooking({
                 showtimeId: state?.showtimeId,
                 seats: state?.seats || [],
-                sessionId: state?.sessionId,
+                sessionId,
                 payment: {
                     provider: "mock",
                     intentId: uuidv4(),
@@ -26,11 +31,27 @@ export default function Checkout() {
                     captured: false
                 }
             });
+            state.seats.forEach((s) => {
+                socket.emit("seatConfirmed", { showtimeId: state.showtimeId, seatKey: s.seatKey });
+            });
             navigate("/tickets", { state: { bookingId: res.data._id } });
         } catch (err) {
             console.error("Booking failed:", err);
+            const sessionId = localStorage.getItem("sessionId");
+            if (sessionId && state?.seats?.length) {
+                await releaseLockSeat(state.showtimeId, state.seats.map(s => s.seatKey), sessionId);
+            }
         }
     };
+
+    useEffect(() => {
+        return () => {
+            const sessionId = localStorage.getItem("sessionId");
+            if (sessionId && state?.seats?.length) {
+                releaseLockSeat(state.showtimeId, state.seats.map((s) => s.seatKey), sessionId);
+            }
+        };
+    }, [state]);
 
     if (!state) return <p>No checkout data provided.</p>;
 

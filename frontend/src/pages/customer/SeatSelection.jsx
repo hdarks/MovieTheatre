@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useFetch } from "@/hooks/useFetch.js";
 import { getSeatMap, getShowtimeById, lockSeat, releaseLockSeat } from "@/api/showtimeApi.js";
 import SeatMap from "@/components/SeatMap";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { calculatePrice } from "@/utils/calculatePrice.js";
 import { useSocket } from "@/hooks/useSocket.js";
 import "./SeatSelection.css";
@@ -18,34 +18,56 @@ export default function SeatSelection() {
     const [seatState, setSeatState] = useState(seatMap);
 
     const socket = useSocket("/showtimes");
+    const isNavigationRef = useRef(false);
+
+    useEffect(() => {
+        if (socket?.id) {
+            localStorage.setItem("sessionId", socket.id);
+            console.log("Socket ID assigned: ", socket.id);
+        }
+    }, [socket?.id]);
 
     useEffect(() => {
         return () => {
             try {
-                if (selected.length > 0 && socket?.id) {
-                    releaseLockSeat(showtimeId, selected, socket.id);
+                if (!isNavigationRef.current) {
+                    const sessionId = localStorage.getItem("sessionId");
+                    if (selected.length > 0 && sessionId) {
+                        releaseLockSeat(showtimeId, selected, sessionId);
+                    }
                 }
             } catch (err) {
                 console.error("Cleanup Failed: ", err);
             }
         };
-    }, [selected, showtimeId, socket?.id]);
+    }, [selected, showtimeId]);
 
     useEffect(() => {
         if (!socket) return;
+
+        socket.on("seatLocked", (seatKey) => {
+            console.log("Seat Locked: ", seatKey);
+            setSeatState((prev) => ({ ...prev, lockedSeats: Array.from(new Set([...prev.lockedSeats, seatKey])) }));
+        });
+        socket.on("seatUnlocked", (seatKey) => {
+            console.log("Seat Unlocked: ", seatKey);
+            setSeatState((prev) => ({ ...prev, lockedSeats: prev.lockedSeats.filter((s) => s !== seatKey) }));
+        });
         socket.on("seatPending", (seatKey) => {
             console.log("Seat Pending: ", seatKey);
-            setSeatState((prev) => ({ ...prev, lockedSeats: [...prev.lockedSeats, seatKey] }));
+            setSeatState((prev) => ({ ...prev, lockedSeats: Array.from(new Set([...prev.lockedSeats, seatKey])) }));
         });
         socket.on("seatConfirmed", (seatKey) => {
             console.log("Seat Confirmed: ", seatKey);
             setSeatState((prev) => ({
                 ...prev,
-                bookedSeats: [...prev.bookedSeats, seatKey],
+                bookedSeats: Array.form(new Set([...prev.bookedSeats, seatKey])),
                 lockedSeats: prev.lockedSeats.filter((s) => s !== seatKey)
             }));
         });
         return () => {
+            socket.off("seatLocked");
+            socket.off("seatUnlocked");
             socket.off("seatPending");
             socket.off("seatConfirmed");
         };
@@ -56,20 +78,30 @@ export default function SeatSelection() {
     if (!seatMap) return <p>No seat map available.</p>;
 
     const handleSelect = async (seatKey) => {
+        const sessionId = localStorage.getItem("sessionId");
         if (seatState?.lockedSeats?.includes(seatKey) || seatState?.bookedSeats?.includes(seatKey)) {
             alert("This seat is unavailable.");
             return;
         }
         if (selected.includes(seatKey)) {
-            setSelected((prev) => prev.filter((s) => s !== seatKey));
-            if (socket?.id) {
-                await releaseLockSeat(showtimeId, [seatKey], socket.id);
+            const newSelection = selected.filter((s) => s !== seatKey);
+            setSelected(newSelection);
+            if (sessionId) {
+                await releaseLockSeat(showtimeId, [seatKey], sessionId);
             }
         } else {
             try {
-                if (socket?.id) {
-                    await lockSeat(showtimeId, [seatKey], socket.id);
-                    setSelected((prev) => [...prev, seatKey]);
+                const newSelection = [...new Set([...selected, seatKey])];
+                if (sessionId) {
+                    const res = await lockSeat(showtimeId, newSelection, sessionId);
+                    console.log("Lock response: ", res);
+                    if (res?.status === 201) {
+                        setSelected(newSelection);
+                        console.log("Locked Seat is: ", newSelection);
+                    } else {
+                        console.warn("Unexpected lock reaponse: ", res);
+                        alert("Unable to lock seat. Please try again!");
+                    }
                 }
             } catch (err) {
                 console.error("Failed to lock seat.", err);
@@ -85,6 +117,7 @@ export default function SeatSelection() {
     });
 
     const proceedCheckout = () => {
+        const sessionId = localStorage.getItem("sessionId");
         navigate("/checkout", {
             state: {
                 showtimeId,
@@ -95,14 +128,15 @@ export default function SeatSelection() {
                 basePrice: seatMap.basePrice,
                 pricingRules: seatMap.pricingRules,
                 showtime,
-                sessionId: socket?.id
+                sessionId
             }
         });
     };
 
     const clearSelection = () => {
-        if (selected.length > 0) {
-            releaseLockSeat(showtimeId, selected, socket.id);
+        const sessionId = localStorage.getItem("sessionId");
+        if (selected.length > 0 && sessionId) {
+            releaseLockSeat(showtimeId, selected, sessionId);
         }
         setSelected([]);
     };

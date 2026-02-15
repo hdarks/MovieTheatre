@@ -2,6 +2,7 @@ import Showtime from "../model/Showtime.js";
 import Theatre from "../model/Theatre.js";
 import Booking from "../model/Booking.js";
 import { logAudit } from "../utils/auditLogger.js";
+import { io } from "../server.js";
 
 const hasConflict = async (theatreId, screenId, startTime, endTime, excludeId = null) => {
     const filter = {
@@ -177,29 +178,39 @@ export const lockSeats = async (req, res) => {
         const now = new Date();
         st.lockedSeats = st.lockedSeats.filter(ls => ls.expiresAt.getTime() > now);
 
-        const existingLocks = new Set(st.lockedSeats.map(ls => ls.seatKey));
-        const bookings = await Booking.find({ showtimeId: st._id, status: { $in: ["pending", "confirmed"] } }).select("seats");
-        const bookedSet = new Set(bookings.flatMap(b => b.seats.map(s => s.seatKey)));
-
         const requested = Array.isArray(seatKeys)
-            ? seatKeys.map(k => {
+            ? [...new Set(seatKeys.map(k => {
                 if (typeof k === "string") return k;
                 if (typeof k === "object" && k.row && k.col) return `${k.row}${k.col}`;
                 return String(k);
-            })
+            }))]
             : [];
-        const unavailable = requested.filter(k => existingLocks.has(k) || bookedSet.has(k));
+
+        const existingLocks = st.lockedSeats;
+        const bookings = await Booking.find({ showtimeId: st._id, status: { $in: ["pending", "confirmed"] } }).select("seats");
+        const bookedSet = new Set(bookings.flatMap(b => b.seats.map(s => s.seatKey)));
+        const unavailable = requested.filter(k => {
+            const lock = existingLocks.find(ls => ls.seatKey === k);
+            return (lock && lock.bySessionId !== sessionId) || bookedSet.has(k);
+        });
         if (unavailable.length) {
             return res.status(409).json({ error: "Some seats are unavailable", seats: unavailable });
         }
 
         const expiresAt = new Date(now.getTime() + ttlSeconds * 1000);
         for (const k of requested) {
+            st.lockedSeats = st.lockedSeats.filter(ls => !(ls.seatKey === k && ls.bySessionId === sessionId));
             st.lockedSeats.push({ seatKey: k, bySessionId: sessionId, expiresAt });
         }
-
+        st.markModified("lockedSeats");
+        console.log("Before save: ", st.lockedSeats);
         await st.save();
-        res.status(201).json({ lockedSeats: st.lockedSeats.filter(ls => requested.includes(ls.seatKey)) });
+        console.log("After save: ", st.lockedSeats);
+        const locked = st.lockedSeats.filter(ls => requested.includes(ls.seatKey) && ls.bySessionId === sessionId);
+        requested.forEach(seatKey => {
+            io.of("/showtimes").to(st._id.toString()).emit("seatLocked", seatKey);
+        });
+        res.status(201).json({ lockedSeats: locked });
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
@@ -219,13 +230,21 @@ export const releaseLocks = async (req, res) => {
             })
             : [];
         const keysSet = normalizedKeys.length ? new Set(normalizedKeys) : null;
+        const releasedSeats = [];
         st.lockedSeats = st.lockedSeats.filter(ls => {
             const sameSession = ls.bySessionId === sessionId;
             const targeted = keysSet ? keysSet.has(ls.seatKey) : true;
-            return !(sameSession && targeted);
+            if (sameSession && targeted) {
+                releasedSeats.push(ls.seatKey);
+                return false;
+            }
+            return true;
         });
         await st.save();
-        res.json({ message: "Locks released" });
+        releasedSeats.forEach(seatKey => {
+            io.of("/showtimes").to(st._id.toString()).emit("seatUnlocked", seatKey);
+        });
+        res.json({ message: "Locks released", releasedSeats });
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
