@@ -2,14 +2,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { createBooking } from "@/api/bookingApi.js";
 import { releaseLockSeat } from "@/api/showtimeApi.js";
 import { v4 as uuidv4 } from "uuid";
-import { useSocket } from "@/hooks/useSocket.js";
+import { useSharedSocket } from "@/context/SocketContext";
 import { useEffect } from "react";
 import "./Checkout.css";
 
 export default function Checkout() {
     const { state } = useLocation();
     const navigate = useNavigate();
-    const socket = useSocket("/showtimes");
+    const socket = useSharedSocket();
 
     const handleConfirm = async () => {
         try {

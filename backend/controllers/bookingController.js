@@ -2,7 +2,7 @@ import Booking from "../model/Booking.js";
 import Showtime from "../model/Showtime.js";
 import { v4 as uuidv4 } from "uuid";
 import { logAudit } from "../utils/auditLogger.js";
-import { io } from "../server.js";
+import { updatSeatStates } from "../utils/seatStateUpdater.js";
 
 export const createBooking = async (req, res) => {
     try {
@@ -13,14 +13,6 @@ export const createBooking = async (req, res) => {
         if (!showtime || showtime.status !== "scheduled") {
             return res.status(404).json({ error: "Showtime not available" });
         }
-        console.log("Requested Seats: ", seats);
-        console.log("Session Id from requests: ", sessionId);
-        console.log("Locked seats in DB: ", showtime.lockedSeats.map(ls => ({
-            seatKey: ls.seatKey,
-            bySessionId: ls.bySessionId,
-            expiresAt: ls.expiresAt
-        })));
-
         const now = new Date();
         const unavailable = seats.filter(s => !showtime.lockedSeats.some(
             ls => ls.seatKey === s.seatKey &&
@@ -41,14 +33,7 @@ export const createBooking = async (req, res) => {
             sessionId
         });
         await booking.save();
-
-        const bookedKeys = new Set(seats.map(s => s.seatKey));
-        showtime.lockedSeats = showtime.lockedSeats.filter(ls => !bookedKeys.has(ls.seatKey));
-        showtime.bookedSeats.push(...seats.map(s => ({ seatKey: s.seatKey })));
-        await showtime.save();
-        seats.forEach((s) => {
-            io.of("/showtimes").to(showtimeId).emit("seatPending", s.seatKey);
-        });
+        await updatSeatStates(showtime, booking, "create");
         res.status(201).json(booking);
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -67,14 +52,7 @@ export const confirmBooking = async (req, res) => {
 
         const showtime = await Showtime.findById(booking.showtimeId);
         if (showtime) {
-            const bookedKeys = new Set(booking.seats.map(s => s.seatKey));
-            showtime.lockedSeats = showtime.lockedSeats.filter(ls => !bookedKeys.has(ls.seatKey));
-            showtime.bookedSeats.push(...booking.seats.map(s => ({ seatKey: s.seatKey })));
-            await showtime.save();
-
-            booking.seats.forEach((s) => {
-                io.of("/showtimes").to(showtime._id.toString()).emit("seatConfirmed", s.seatKey);
-            });
+            await updateSeatState(showtime, booking, "confirm");
         }
         await logAudit({
             entity: "booking",
@@ -100,13 +78,7 @@ export const cancelBooking = async (req, res) => {
 
         const showtime = await Showtime.findById(booking.showtimeId);
         if (showtime) {
-            const cancelledKeys = new Set(booking.seats.map(s => s.seatKey));
-            showtime.lockedSeats = showtime.lockedSeats.filter(ls => !cancelledKeys.has(ls.seatKey));
-            showtime.bookedSeats = showtime.bookedSeats.filter(bs => !cancelledKeys.has(bs.seatKey));
-            await showtime.save();
-            booking.seats.forEach((s) => {
-                io.of("/showtimes").to(showtime._id.toString()).emit("seatUnlocked", s.seatKey);
-            });
+            await updateSeatState(showtime, booking, "cancel");
         }
         await logAudit({
             entity: "booking",
@@ -135,12 +107,7 @@ export const refundBooking = async (req, res) => {
 
         const showtime = await Showtime.findById(booking.showtimeId);
         if (showtime) {
-            const refundedKeys = new Set(booking.seats.map(s => s.seatKey));
-            showtime.bookedSeats = showtime.bookedSeats.filter(bs => !refundedKeys.has(bs.seatKey));
-            await showtime.save();
-            booking.seats.forEach((s) => {
-                io.of("/showtimes").to(showtime._id.toString()).emit("seatUnlocked", s.seatKey);
-            });
+            await updateSeatState(showtime, booking, "refund");
         }
         await logAudit({
             entity: "booking",

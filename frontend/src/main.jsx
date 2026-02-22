@@ -5,13 +5,16 @@ import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { RoleProvider } from './context/RoleContext.jsx'
 import { ThemeProvider } from './context/ThemeContext.jsx'
+import { SocketProvider } from './context/SocketContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <RoleProvider>
         <ThemeProvider>
-          <App />
+          <SocketProvider>
+            <App />
+          </SocketProvider>
         </ThemeProvider>
       </RoleProvider>
     </AuthProvider>

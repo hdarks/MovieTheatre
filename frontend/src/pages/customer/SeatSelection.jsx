@@ -4,7 +4,7 @@ import { getSeatMap, getShowtimeById, lockSeat, releaseLockSeat } from "@/api/sh
 import SeatMap from "@/components/SeatMap";
 import { useEffect, useRef, useState } from "react";
 import { calculatePrice } from "@/utils/calculatePrice.js";
-import { useSocket } from "@/hooks/useSocket.js";
+import { useSharedSocket } from "@/context/SocketContext";
 import "./SeatSelection.css";
 import "@/styles/variables.css";
 import "@/styles/seatMap.css";
@@ -17,15 +17,8 @@ export default function SeatSelection() {
     const [selected, setSelected] = useState([]);
     const [seatState, setSeatState] = useState(seatMap);
 
-    const socket = useSocket("/showtimes");
+    const socket = useSharedSocket();
     const isNavigationRef = useRef(false);
-
-    useEffect(() => {
-        if (socket?.id) {
-            localStorage.setItem("sessionId", socket.id);
-            console.log("Socket ID assigned: ", socket.id);
-        }
-    }, [socket?.id]);
 
     useEffect(() => {
         return () => {
