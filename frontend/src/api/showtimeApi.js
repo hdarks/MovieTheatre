@@ -6,5 +6,11 @@ export const createShowtime = (data) => axiosInstance.post("/showtimes", data);
 export const updateShowtime = (id, data) => axiosInstance.patch(`/showtimes/${id}`, data);
 export const cancelShowtime = (id) => axiosInstance.post(`/showtimes/${id}/cancel`);
 export const getSeatMap = (id) => axiosInstance.get(`/showtimes/${id}/seatmap`);
-export const lockSeat = (id, seatKeys, sessionId) => axiosInstance.post(`/showtimes/${id}/lock`, { seatKeys, sessionId });
-export const releaseLockSeat = (id, seatKeys, sessionId) => axiosInstance.post(`/showtimes/${id}/release-locks`, { seatKeys, sessionId });
+export const lockSeat = (id, seatKeys, sessionId) => {
+    const normalizedKeys = seatKeys.map(s => typeof s === "string" ? s : s.seatKey);
+    return axiosInstance.post(`/showtimes/${id}/lock`, { seatKeys: normalizedKeys, sessionId });
+};
+export const releaseLockSeat = (id, seatKeys, sessionId) => {
+    const normalizedKeys = seatKeys.map(s => typeof s === "string" ? s : s.seatKey);
+    return axiosInstance.post(`/showtimes/${id}/release-locks`, { seatKeys: normalizedKeys, sessionId });
+};

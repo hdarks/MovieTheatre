@@ -3,17 +3,19 @@ import { createBooking } from "@/api/bookingApi.js";
 import { releaseLockSeat } from "@/api/showtimeApi.js";
 import { v4 as uuidv4 } from "uuid";
 import { useSharedSocket } from "@/context/SocketContext";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import "./Checkout.css";
 
 export default function Checkout() {
     const { state } = useLocation();
     const navigate = useNavigate();
     const socket = useSharedSocket();
+    const releasedRef = useRef(false);
+    const getSessionId = () => socket?.id || localStorage.getItem("sessionId");
 
     const handleConfirm = async () => {
         try {
-            const sessionId = localStorage.getItem("sessionId");
+            const sessionId = getSessionId();
             console.log("Booking Payload: ", {
                 showtimeId: state?.showtimeId,
                 seats: state?.seats,
@@ -31,24 +33,23 @@ export default function Checkout() {
                     captured: false
                 }
             });
-            state.seats.forEach((s) => {
-                socket.emit("seatConfirmed", { showtimeId: state.showtimeId, seatKey: s.seatKey });
-            });
             navigate("/tickets", { state: { bookingId: res.data._id } });
         } catch (err) {
             console.error("Booking failed:", err);
-            const sessionId = localStorage.getItem("sessionId");
-            if (sessionId && state?.seats?.length) {
-                await releaseLockSeat(state.showtimeId, state.seats.map(s => s.seatKey), sessionId);
+            const sessionId = getSessionId();
+            if (sessionId && state?.seats?.length && !releasedRef.current) {
+                await releaseLockSeat(state.showtimeId, state.seats, sessionId);
+                releasedRef.current = true;
             }
         }
     };
 
     useEffect(() => {
         return () => {
-            const sessionId = localStorage.getItem("sessionId");
-            if (sessionId && state?.seats?.length) {
-                releaseLockSeat(state.showtimeId, state.seats.map((s) => s.seatKey), sessionId);
+            const sessionId = getSessionId();
+            if (sessionId && state?.seats?.length && !releasedRef.current) {
+                releaseLockSeat(state.showtimeId, state.seats, sessionId);
+                releasedRef.current = true;
             }
         };
     }, [state]);

@@ -19,12 +19,13 @@ export default function SeatSelection() {
 
     const socket = useSharedSocket();
     const isNavigationRef = useRef(false);
+    const getSessionId = () => socket?.id || localStorage.getItem("sessionId");
 
     useEffect(() => {
         return () => {
             try {
                 if (!isNavigationRef.current) {
-                    const sessionId = localStorage.getItem("sessionId");
+                    const sessionId = getSessionId();
                     if (selected.length > 0 && sessionId) {
                         releaseLockSeat(showtimeId, selected, sessionId);
                     }
@@ -54,7 +55,7 @@ export default function SeatSelection() {
             console.log("Seat Confirmed: ", seatKey);
             setSeatState((prev) => ({
                 ...prev,
-                bookedSeats: Array.form(new Set([...prev.bookedSeats, seatKey])),
+                bookedSeats: Array.from(new Set([...prev.bookedSeats, seatKey])),
                 lockedSeats: prev.lockedSeats.filter((s) => s !== seatKey)
             }));
         });
@@ -71,7 +72,7 @@ export default function SeatSelection() {
     if (!seatMap) return <p>No seat map available.</p>;
 
     const handleSelect = async (seatKey) => {
-        const sessionId = localStorage.getItem("sessionId");
+        const sessionId = getSessionId();
         if (seatState?.lockedSeats?.includes(seatKey) || seatState?.bookedSeats?.includes(seatKey)) {
             alert("This seat is unavailable.");
             return;
@@ -110,7 +111,7 @@ export default function SeatSelection() {
     });
 
     const proceedCheckout = () => {
-        const sessionId = localStorage.getItem("sessionId");
+        const sessionId = getSessionId();
         navigate("/checkout", {
             state: {
                 showtimeId,
@@ -127,7 +128,7 @@ export default function SeatSelection() {
     };
 
     const clearSelection = () => {
-        const sessionId = localStorage.getItem("sessionId");
+        const sessionId = getSessionId();
         if (selected.length > 0 && sessionId) {
             releaseLockSeat(showtimeId, selected, sessionId);
         }
@@ -164,8 +165,8 @@ export default function SeatSelection() {
                 seats={seatMap.seats}
                 rows={seatMap.rows}
                 cols={seatMap.cols}
-                lockedSeats={seatMap.lockedSeats}
-                bookedSeats={seatMap.bookedSeats}
+                lockedSeats={seatState?.lockedSeats || []}
+                bookedSeats={seatState?.bookedSeats || []}
                 onSelect={handleSelect}
                 selected={selected}
                 socket={socket}
